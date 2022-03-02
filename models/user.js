@@ -1,40 +1,40 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 // // const bcrypt = require('bcrypt');
 // // const saltRounds = 10;
 const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      required: true,
+    {
+        email: {
+            type: String,
+            required: true,
+        },
+        nickname: {
+            type: String,
+            required: true,
+        },
+        password:{
+            type: String,
+            required: true,
+        },
+        likes:{
+            type: [String],
+            required
+        },
+        participate:{
+            type: [String],
+        },
+        kakaoToken:{
+            type:String,
+        }
     },
-    nickname: {
-      type: String,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    likes: {
-      type: [String],
-      required,
-    },
-    participate: {
-      type: [String],
-    },
-    kakaoToken: {
-      type: String,
-    },
-  },
-  { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
+        { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
 
 // 버츄얼 필드
 userSchema.virtual("userId").get(function () {
-  return this._id.toHexString();
+    return this._id.toHexString();
 });
 userSchema.set("toJSON", {
-  virtuals: true,
+    virtuals: true,
 });
 
 // userSchema.pre('save', function (next) {
@@ -56,4 +56,4 @@ userSchema.set("toJSON", {
 //     }
 // });
 
-module.exports = mongoose.model("Users", userSchema);
+module.exports = mongoose.model('Users', userSchema);

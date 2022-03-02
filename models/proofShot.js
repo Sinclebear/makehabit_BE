@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const proofShotSchema = new mongoose.Schema(
   {
     challengeId: {
-      type: ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     userId: {
-      type: ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     imgUrl: {
