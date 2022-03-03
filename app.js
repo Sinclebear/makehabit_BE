@@ -2,14 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const { swaggerUi, specs } = require("./modules/swagger");
 
-// const connect = require('./models'); // database connect
+const connect = require('./models/index'); // database connect
 // const cors = require('cors');
 const port = 3000;
 const app = express();
 // const commentsRouter = require('./routes/comment');
 // const postRouter = require('./routes/post');
 const userRouter = require("./routes/user");
-// connect();
+connect();
 
 //body 읽기
 app.use(express.json());
