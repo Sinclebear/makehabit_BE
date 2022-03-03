@@ -16,8 +16,12 @@ const proofShotSchema = new mongoose.Schema(
     },
     comment: {
       type: String,
-      required,
+      required:true,
     },
+    challengeTitle:{
+      type:String,
+      required:true,
+    }
   },
   { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
