@@ -72,8 +72,10 @@ router.get('/proofShot', authMiddleware,async (req, res) => {
 
  router.get('/proofShot/:proofShotId', authMiddleware,async (req, res) => {
     let { user } = res.locals;
+    const { proofShotId } = req.params;
+
     console.log(user._id);
-    let proofShot = await Proofshot.findOne({userId:user._id});
+    let proofShot = await Proofshot.findOne({userId:user._id,_id:proofShotId});
     console.log(proofShot);
     res.status(200).json({proofShot}) 
  });
