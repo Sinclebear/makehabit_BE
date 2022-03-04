@@ -1,48 +1,48 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const ChallengeSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
+    {
+        title: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        content: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        category: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        thumbnail: {
+            type: String,
+            required: true,
+        },
+        startAt: {
+            type: Date,
+            required: true,
+        },
+        howtoContent: {
+            type: String,
+            required: true,
+        },
+        participants: {
+            type: [String],
+        },
     },
-    content: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    category: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    thumbnail: {
-      type: String,
-      required: true,
-    },
-    startAt: {
-      type: Date,
-      required: true,
-    },
-    howtoContent: {
-      type: String,
-      required: true,
-    },
-    participants: {
-      type: [String],
-    },
-  },
 
-  { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력
+    { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력
 );
 
-ChallengeSchema.virtual("challengeId").get(function () {
-  return this._id.toHexString();
+ChallengeSchema.virtual('challengeId').get(function () {
+    return this._id.toHexString();
 });
 
-ChallengeSchema.set("toJSON", {
-  virtuals: true,
+ChallengeSchema.set('toJSON', {
+    virtuals: true,
 });
 
-module.exports = mongoose.model("Challenges", ChallengeSchema);
+module.exports = mongoose.model('Challenges', ChallengeSchema);

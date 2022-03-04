@@ -1,6 +1,6 @@
-require("dotenv").config();
-const express = require("express");
-const { swaggerUi, specs } = require("./modules/swagger");
+require('dotenv').config();
+const express = require('express');
+const { swaggerUi, specs } = require('./modules/swagger');
 const connect = require('./models/index');
 
 // const connect = require('./models'); // database connect
@@ -9,7 +9,7 @@ const port = 3000;
 const app = express();
 // const commentsRouter = require('./routes/comment');
 // const postRouter = require('./routes/post');
-const userRouter = require("./routes/user");
+const userRouter = require('./routes/user');
 const mypageRouter = require('./routes/mypage');
 
 connect();
@@ -26,16 +26,15 @@ app.use(express.urlencoded({ extended: true }));
 //     [postRouter, commentsRouter, userRouter]
 // );
 
-app.use("/api/users", userRouter);
-app.use("/api/mypage", mypageRouter);
+app.use('/api/users', userRouter);
+app.use('/api/mypage', mypageRouter);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-app.get("/",  (req, res) => {
-  res.status(200).send("hello world");
+app.get('/', (req, res) => {
+    res.status(200).send('hello world');
 });
 
-
 app.listen(port, () => {
-  console.log("running on port", port);
+    console.log('running on port', port);
 });

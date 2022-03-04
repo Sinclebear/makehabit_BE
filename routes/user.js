@@ -14,7 +14,11 @@ const email_validation = joi.object({
 
 const nickname_validation = joi.object({
     //nickname은 3~15 영어,한자,숫자
-    nickname: joi.string().pattern(/^[A-Za-z0-9가-힣]{3,15}$/).trim(true).required(),
+    nickname: joi
+        .string()
+        .pattern(/^[A-Za-z0-9가-힣]{3,15}$/)
+        .trim(true)
+        .required(),
 });
 const password_validation = joi.object({
     //password는 최소 8 자, 최소 하나의 문자, 하나의 숫자 및 하나의 특수 문자 :
@@ -27,12 +31,12 @@ const password_validation = joi.object({
 // 회원가입 API
 router.post('/signup', async (req, res) => {
     try {
-        const { email, nickname, password, confirmPassword} = req.body;
-        await email_validation.validateAsync({email});
-        await nickname_validation.validateAsync({nickname});
-        await password_validation.validateAsync({password});
+        const { email, nickname, password, confirmPassword } = req.body;
+        await email_validation.validateAsync({ email });
+        await nickname_validation.validateAsync({ nickname });
+        await password_validation.validateAsync({ password });
 
-        if(password!==confirmPassword){
+        if (password !== confirmPassword) {
             return res.status(400).json({
                 message: '비밀번호가 일치하지 않습니다.',
             });
@@ -78,84 +82,79 @@ router.post('/signup', async (req, res) => {
 
 // 로그인 API
 router.post('/login', async (req, res) => {
-    try{
+    try {
         const { email, password } = req.body;
-        const user = await User.findOne({email}).exec();
-        
+        const user = await User.findOne({ email }).exec();
+
         //email에 해당하는 유저가 없는 경우
-        if(!user){
+        if (!user) {
             return res.status(400).json({
                 result: '이메일이나 비밀번호를 확인해주세요.',
             });
         }
 
-        //passworddp 해당하는 유저가 없는 경우 
+        //passworddp 해당하는 유저가 없는 경우
         const isSamePassword = await bcrypt.compare(password, user.password);
         if (!isSamePassword) {
             return res.status(400).json({
                 message: '이메일이나 비밀번호를 확인해주세요!',
             });
         }
-    
-        const token = jwt.sign({email}, process.env.JWT_SECRET_KEY);
+
+        const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY);
         return res.status(201).json({
             token,
             email,
             message: '로그인 되었습니다.',
         });
-    }catch(err){
+    } catch (err) {
         res.status(400).json({
-            message:'이메일과 비밀번호를 모두 입력해주세요.'
-        })
+            message: '이메일과 비밀번호를 모두 입력해주세요.',
+        });
     }
-
 });
 
 router.post('/checkEmail', async (req, res) => {
-
-    try{
+    try {
         const { email } = await email_validation.validateAsync(req.body);
         const user = await User.findOne({ email }).exec();
         if (!user) {
-            return res.status(200).json({message:'사용 가능한 이메일 입니다.'});        
+            return res.status(200).json({ message: '사용 가능한 이메일 입니다.' });
         } else {
-            return res.status(400).json({message: '이미 가입된 이메일 입니다.'});
+            return res.status(400).json({ message: '이미 가입된 이메일 입니다.' });
         }
-    }catch (error) {
+    } catch (error) {
         let joiError = error.details[0].message;
         console.log(joiError);
         return res.status(400).json({
             message: '이메일 형식을 확인해주세요.',
-        });    
+        });
     }
 });
 
-
 router.post('/checkNickname', async (req, res) => {
-    try{
+    try {
         const { nickname } = await nickname_validation.validateAsync(req.body);
         const user = await User.findOne({ nickname }).exec();
         if (!user) {
-            return res.status(200).json({message:'사용 가능한 닉네임 입니다.'});        
+            return res.status(200).json({ message: '사용 가능한 닉네임 입니다.' });
         } else {
-            return res.status(400).json({message: '이미 가입된 닉네임 입니다.'});
+            return res.status(400).json({ message: '이미 가입된 닉네임 입니다.' });
         }
-    }catch (error) {
+    } catch (error) {
         return res.status(400).json({
             message: '닉네임은 3자 이상, 15자 이하의 영어,한자,숫자로만 구성되어야 합니다.',
-        });    
+        });
     }
 });
-
 
 router.get('/checkLogin', authMiddleware, async (req, res) => {
     console.log('test');
     const { user } = res.locals; // user object
     res.status(200).json({
-        email:user.email,
-        nickname:user.nickname
+        email: user.email,
+        nickname: user.nickname,
     });
 });
-
 
 module.exports = router;
