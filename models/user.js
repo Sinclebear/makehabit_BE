@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema(
         },
         likes:{
             type: [String],
-            required
         },
         participate:{
             type: [String],
