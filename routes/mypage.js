@@ -17,6 +17,26 @@ const moment = require('moment');
  *          application/json:
  *            schema:
  *              type: object
+ *              properties:
+ *                challenges:
+ *                  type: array
+ *                  items:
+ *                     type: object
+ *                     properties:
+ *                       title:
+ *                         type: string
+ *                       thumbnail:
+ *                         type: string
+ *                       startAt:
+ *                         type: string
+ *                       participants:
+ *                         type: integer
+ *                       isUpload:
+ *                         type: boolean
+ *                       round:
+ *                         type: integer
+ *                       challengeId:
+ *                         type: string
  */
 router.get('/challenge', authMiddleware, async (req, res) => {
     let { user } = res.locals;
@@ -49,7 +69,6 @@ router.get('/challenge', authMiddleware, async (req, res) => {
             (moment(today) - moment(moment(i._doc.startAt).format('YYYY-MM-DD'))) /
             (1000 * 60 * 60 * 24);
         let round = Math.floor(pastDays / 3) + 1;
-        console.log(pastDays);
         i._doc.round = round;
     }
 
@@ -71,6 +90,18 @@ router.get('/challenge', authMiddleware, async (req, res) => {
  *          application/json:
  *            schema:
  *              type: object
+ *              properties:
+ *                proofShots:
+ *                  type: array
+ *                  items:
+ *                     type: object
+ *                     properties:
+ *                       imgUrl:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                       proofShotId:
+ *                         type: string
  */
 router.get('/proofShot', authMiddleware, async (req, res) => {
     // await Proofshot.create({ChallengeId})
@@ -109,11 +140,27 @@ router.get('/proofShot', authMiddleware, async (req, res) => {
  *          application/json:
  *            schema:
  *              type: object
+ *              properties:
+ *                proofShot:
+ *                  type: object
+ *                  properties:
+ *                    challengeId:
+ *                      type: string
+ *                    userId:
+ *                      type: string
+ *                    imgUrl:
+ *                      type: string
+ *                    comment:
+ *                      type: string
+ *                    challengeTitle:
+ *                      type: string
+ *                    createdAt:
+ *                      type: string
+ *                    proofShotId:
+ *                      type: string
  */
 router.get('/proofShot/:proofShotId', authMiddleware, async (req, res) => {
-    console.log(req);
     let { user } = res.locals;
-    console.log(user);
     if (user === undefined) {
         return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
     }
@@ -121,7 +168,9 @@ router.get('/proofShot/:proofShotId', authMiddleware, async (req, res) => {
     const { proofShotId } = req.params;
     let proofShot = await Proofshot.findOne({
         _id: proofShotId,
+        //userId: user.userId,
     });
+    console.log(proofShot);
     return res.status(200).json({ proofShot });
 });
 

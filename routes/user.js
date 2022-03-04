@@ -34,7 +34,7 @@ const bcrypt = require('bcrypt');
  *                description: "패스워드 확인"
  *    responses:
  *      "200":
- *        description: 사용자가 서버로 전달하는 값에 따라 결과 값은 다릅니다.(회원가입)
+ *        description: 회원가입 성공 시
  *        content:
  *          application/json:
  *            schema:
@@ -140,14 +140,19 @@ router.post('/signup', async (req, res) => {
  *                description: "패스워드"
  *    responses:
  *      "200":
- *        description: 사용자가 서버로 전달하는 값에 따라 결과 값은 다릅니다.(회원가입)
+ *        description: 로그인 성공 시
  *        content:
  *          application/json:
  *            schema:
  *              type: object
  *              properties:
+ *                token:
+ *                  type: string
+ *                email:
+ *                  type: string
  *                message:
  *                  type: string
+ *
  */
 // 로그인 API
 router.post('/login', async (req, res) => {
@@ -296,7 +301,6 @@ router.post('/checkNickname', async (req, res) => {
  *                nickname:
  *                  type: string
  */
-
 router.get('/checkLogin', authMiddleware, async (req, res) => {
     const { user } = res.locals; // user object
     if (user === undefined) {
