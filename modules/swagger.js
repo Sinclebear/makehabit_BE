@@ -1,17 +1,34 @@
 const swaggerUi = require('swagger-ui-express');
 const swaggereJsdoc = require('swagger-jsdoc');
+
 const options = {
     swaggerDefinition: {
+        openapi: '3.0.0',
         info: {
-            title: 'Test API',
             version: '1.0.0',
-            description: 'Test API with express',
+            title: 'habitmaker',
+            description: 'habitmaker swagger',
         },
-        // host: "localhost:3300",
-        host: 'localhost:3000',
-        basePath: '/',
+        servers: [
+            {
+                url: 'http://localhost:3000', // 요청 URL
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
-    apis: ['./routes/*.js', './swagger/*'],
+    apis: ['./routes/*.js', './swagger/*.js'], //Swagger 파일 연동
 };
 const specs = swaggereJsdoc(options);
 
