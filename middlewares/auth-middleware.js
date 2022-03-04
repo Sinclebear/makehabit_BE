@@ -5,7 +5,9 @@ module.exports = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (authorization === undefined) {
-        res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
+        res.locals.user = undefined;
+        next();
+        //res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
         return;
     }
 
