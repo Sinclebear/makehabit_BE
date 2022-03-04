@@ -8,10 +8,9 @@ const connect = require('./models/index');
 const port = 3000;
 const app = express();
 // const commentsRouter = require('./routes/comment');
-// const postRouter = require('./routes/post');
+const challengeRouter = require('./routes/challenge');
 const userRouter = require('./routes/user');
 const mypageRouter = require('./routes/mypage');
-
 connect();
 
 //body 읽기
@@ -21,10 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 //app.use(cors());
 
 // 라우터 배치
-// app.use(
-//     '/api',
-//     [postRouter, commentsRouter, userRouter]
-// );
+app.use('/api', [challengeRouter, userRouter]);
 
 app.use('/api/users', userRouter);
 app.use('/api/mypage', mypageRouter);
