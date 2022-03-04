@@ -149,7 +149,6 @@ router.post('/checkNickname', async (req, res) => {
 });
 
 router.get('/checkLogin', authMiddleware, async (req, res) => {
-    console.log('test');
     const { user } = res.locals; // user object
     res.status(200).json({
         email: user.email,
