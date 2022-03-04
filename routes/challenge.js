@@ -2,7 +2,24 @@ const express = require('express');
 const router = express.Router();
 const Challenge = require('../models/challenge');
 const User = require('../models/user');
+const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
+
+// router.post('/proof', async (req, res) => {
+//     const challengeId = '6221c5e7e636499889809254';
+//     const userId = '6221bee5b0d7cb1ef9d8a23e';
+//     const imgUrl = 'https://rednada1708.s3.ap-northeast-2.amazonaws.com/original/water.jfif';
+//     const comment = '오늘 너무 뿌듯합니다.';
+//     const challengeTitle = '하루에 한번 물마시기 챌린지2';
+//     const proofShot = await Proofshot.create({
+//         challengeId,
+//         userId,
+//         imgUrl,
+//         comment,
+//         challengeTitle,
+//     });
+//     res.send('인증 완료');
+// });
 
 //메인 - 검색기능 기능 구현 완료 (1차..정렬기준 마련 필요)
 router.get('/search', async (req, res) => {
@@ -40,7 +57,7 @@ router.get('/search', async (req, res) => {
     res.status(200).json({ challenges });
 });
 
-// 카테고리 페이지 목록조회 //body에 userId 담아야..미들웨어 통과 X
+// 카테고리 페이지 목록조회
 router.get('/category/:categoryId', authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
     const { categoryId } = req.params;
@@ -103,16 +120,16 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
         } else {
             userId = res.locals.user.userId;
         }
-        let userLikes, userParticipate;
+        let userLikes, userParticipate, userProofShot;
         if (userId) {
+            console.log(userId, challengeId);
             const existUser = await User.findById(userId);
             userLikes = existUser.likes;
             userParticipate = existUser.participate;
+            userProofShot = await Proofshot.find({ challengeId, userId });
         }
-
         const challenge = await Challenge.findById(challengeId).lean();
         // 참가회수
-        console.log(challenge);
         const joinPeople = challenge.participants;
         challenge['participants'] = joinPeople.length;
         // round
@@ -131,7 +148,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             challenge['status'] = 'playing';
         }
         if (userId) {
-            console.log(userId, joinPeople);
+            //console.log(userId, joinPeople);
             // if (joinPeople.includes(userId)){ 이걸로 하면 왜 안되는지..ㅜ.ㅜ
             if (userParticipate.includes(challengeId)) {
                 challenge['isParticipate'] = true;
@@ -143,8 +160,23 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             } else {
                 challenge['isLike'] = false;
             }
-            // 로그인한 유저의 참여여부
-            // 로그인한 유저의 좋아요여부
+            challenge['proofCount'] = userProofShot.length;
+            console.log(cur);
+            if (userProofShot.length) {
+                console.log(userProofShot);
+                if (
+                    userProofShot.filter((item) => item.createdAt.toLocaleDateString() === cur)
+                        .length
+                ) {
+                    challenge['isUpload'] = true;
+                } else {
+                    challenge['isUpload'] = false;
+                }
+            } else {
+                challenge['isUpload'] = false;
+            }
+            // 로그인한 유저의 그날 인증여부
+            // 로그인한 유저의 총 인증횟수
         } else {
             challenge['isLike'] = false;
             challenge['isParticipate'] = false;
