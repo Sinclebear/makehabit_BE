@@ -13,6 +13,9 @@ const options = {
             {
                 url: 'http://localhost:3000', // 요청 URL
             },
+            {
+                url: 'http://52.79.227.179:3000', // 요청 URL
+            },
         ],
         components: {
             securitySchemes: {
