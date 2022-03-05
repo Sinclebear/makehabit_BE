@@ -5,25 +5,19 @@ const User = require('../models/user');
 const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
 
-//메인 - 검색기능
-router.get('/search', async (req, res) => {
-    const { title } = req.query;
-    const existChallenges = await Challenge.find(
-        { title: { $regex: `${title}` } },
-        { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-    ).lean();
-    const challenges = existChallenges.map((item) => {
+router.get('/main/recommendation', async (req, res) => {
+    const { length } = req.query;
+    const randomChallenges = await Challenge.aggregate([{ $sample: { size: Number(length) } }]);
+    const challenges = randomChallenges.map((item) => {
         //id 바꿔주는 부분
         let challengeId = item._id.toString();
         item['challengeId'] = challengeId;
         //참여인원수 구하는 부분
-        let joinPeople = item.participants;
-        let participants = joinPeople.length;
-        item['participants'] = participants;
+        item['participants'] = item.participants.length;
         // round 구하는 부분
         let start = item.startAt;
-        let cur = new Date().toLocaleDateString();
-        let end = new Date(cur);
+        let cur = new Date().toLocaleDateString(); //2022-03-05........
+        let end = new Date(cur); //2022-03-05
         var dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
         if (dateDiff < 0) {
             item['round'] = '라운드 시작 전입니다.';
@@ -37,24 +31,60 @@ router.get('/search', async (req, res) => {
         }
         return item;
     });
-    console.log(challenges);
     res.status(200).json({ challenges });
 });
 
-// 카테고리 페이지 목록조회
+//메인 - 검색기능 //주현님 모먼트 !!
+router.get('/search', async (req, res) => {
+    const { title } = req.query;
+    const existChallenges = await Challenge.find(
+        { title: { $regex: `${title}` } },
+        { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+    ).lean(); // populate.._doc..
+    const challenges = existChallenges.map((item) => {
+        //id 바꿔주는 부분
+        let challengeId = item._id.toString();
+        item['challengeId'] = challengeId;
+        //참여인원수 구하는 부분
+        let joinPeople = item.participants;
+        let participants = joinPeople.length;
+        item['participants'] = participants;
+        // round 구하는 부분
+        let start = item.startAt;
+        let cur = new Date().toLocaleDateString(); //2022-03-05........
+        let end = new Date(cur); //2022-03-05
+        var dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
+        if (dateDiff < 0) {
+            item['round'] = '라운드 시작 전입니다.';
+            item['status'] = 'before';
+        } else if (dateDiff > 30) {
+            item['round'] = '라운드 종료 되었습니다.';
+            item['status'] = 'complete';
+        } else {
+            item['round'] = Math.ceil((dateDiff + 1) / 3);
+            item['status'] = 'playing';
+        }
+        return item;
+    });
+    res.status(200).json({ challenges });
+});
+
+// 카테고리 페이지 목록조회 // 걱정됐죠 ㅜ.ㅜ
 router.get('/category/:categoryId', authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
     const { categoryId } = req.params;
     const { length } = req.query;
     let existUser, userLikes;
     if (userId) {
+        //populate objectId를 가지고 다시 조회
+        //** projection 은 가져올 때부터 특정 필드 가져오는 작업 findById, projection userLikes가져올 수 있다.
         existUser = await User.findById(userId);
         userLikes = existUser.likes;
     }
     const existChallenges = await Challenge.find(
         { category: categoryId },
         { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-    )
+    ) // projection으로 대체가능  질문..5개 가져오는 기준?!
         .limit(length)
         .lean();
     const challenges = existChallenges.map((item) => {
@@ -104,6 +134,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
         } else {
             userId = res.locals.user.userId;
         }
+        console.log(userId);
         let userLikes, userParticipate, userProofShot;
         if (userId) {
             console.log(userId, challengeId);
@@ -113,7 +144,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             userProofShot = await Proofshot.find({ challengeId, userId });
         }
         const challenge = await Challenge.findById(challengeId).lean();
-        // 참가회수
+        // 참가회수 { }
         const joinPeople = challenge.participants;
         challenge['participants'] = joinPeople.length;
         // round
@@ -132,6 +163,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             challenge['status'] = 'playing';
         }
         if (userId) {
+            // isParticipate가 false이면 isParticiapte false, proofCount 0으로 반환, isUpload false
             //console.log(userId, joinPeople);
             // if (joinPeople.includes(userId)){ 이걸로 하면 왜 안되는지..ㅜ.ㅜ
             if (userParticipate.includes(challengeId)) {
@@ -144,7 +176,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             } else {
                 challenge['isLike'] = false;
             }
-            challenge['proofCount'] = userProofShot.length;
+            challenge['proofCount'] = userProofShot.length; //수정
             console.log(cur);
             if (userProofShot.length) {
                 console.log(userProofShot);
@@ -165,7 +197,7 @@ router.get('/challenges/:challengeId', authMiddleware, async (req, res) => {
             challenge['isLike'] = false;
             challenge['isParticipate'] = false;
             challenge['isUpload'] = false;
-            challenge['proofCount'] = false;
+            challenge['proofCount'] = 0;
         }
         res.status(200).send(challenge);
     } catch (err) {
@@ -212,7 +244,7 @@ router.post('/challenges/:challengeId/join', authMiddleware, async (req, res) =>
     //일단 challengeId로 조회해야함
     if (!res.locals.user) {
         res.status(401).send({
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
         return;
     }
@@ -239,7 +271,7 @@ router.post('/challenges/:challengeId/join', authMiddleware, async (req, res) =>
 router.delete('/challenges/:challengeId/join', authMiddleware, async (req, res) => {
     if (!res.locals.user) {
         res.status(401).send({
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
         return;
     }
@@ -266,7 +298,7 @@ router.delete('/challenges/:challengeId/join', authMiddleware, async (req, res) 
 router.post('/challenges/:challengeId/like', authMiddleware, async (req, res) => {
     if (!res.locals.user) {
         res.status(401).send({
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
         return;
     }
@@ -287,7 +319,7 @@ router.post('/challenges/:challengeId/like', authMiddleware, async (req, res) =>
 router.delete('/challenges/:challengeId/like', authMiddleware, async (req, res) => {
     if (!res.locals.user) {
         res.status(401).send({
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
         return;
     }
