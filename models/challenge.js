@@ -30,7 +30,7 @@ const ChallengeSchema = new mongoose.Schema(
             required: true,
         },
         participants: {
-            type: [String],
+            type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
         },
     },
 

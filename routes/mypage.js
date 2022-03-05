@@ -44,7 +44,7 @@ router.get('/challenge', authMiddleware, async (req, res) => {
         return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
     }
 
-    let today = moment().format('YYYY-MM-DD');
+    let today = moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
     user = await user.populate('participate', 'title _id participants thumbnail startAt');
     let challenges = user.participate;
     for (const i of challenges) {

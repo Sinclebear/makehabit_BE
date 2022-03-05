@@ -105,7 +105,7 @@ router.post('/signup', async (req, res) => {
         }
         if (joiError.includes('nickname')) {
             res.status(400).json({
-                message: '닉네임은 3자 이상, 15자 이하의 영어,한자,숫자로만 구성되어야 합니다.',
+                message: '닉네임은 3자 이상, 15자 이하의 영어,한글,숫자로만 구성되어야 합니다.',
             });
         }
         if (joiError.includes('password')) {
