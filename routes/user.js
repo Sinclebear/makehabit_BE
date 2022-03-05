@@ -304,7 +304,7 @@ router.post('/checkNickname', async (req, res) => {
 router.get('/checkLogin', authMiddleware, async (req, res) => {
     const { user } = res.locals; // user object
     if (user === undefined) {
-        return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
+        return res.status(400).json({ message: '로그인 후 사용하시오' });
     }
     res.status(200).json({
         email: user.email,

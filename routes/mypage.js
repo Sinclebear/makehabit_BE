@@ -41,39 +41,43 @@ const moment = require('moment');
 router.get('/challenge', authMiddleware, async (req, res) => {
     let { user } = res.locals;
     if (user === undefined) {
-        return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
+        return res.status(401).json({ message: '로그인 후 사용하시오' });
     }
 
-    let today = moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
-    user = await user.populate('participate', 'title _id participants thumbnail startAt');
-    let challenges = user.participate;
-    for (const i of challenges) {
-        //참여자 수
-        i._doc.participants = i._doc.participants.length;
+    try {
+        let today = moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
+        user = await user.populate('participate', 'title _id participants thumbnail startAt');
+        console.log(user);
+        let challenges = user.participate;
+        for (const i of challenges) {
+            //참여자 수
+            i._doc.participants = i._doc.participants.length;
 
-        //금일 인증 여부
-        if (
-            await Proofshot.findOne({
-                challengeId: i._doc._id,
-                createdAt: {
-                    $gte: new Date(today).toISOString(),
-                    $lt: new Date(moment(today).add(1, 'days')).toISOString(),
-                },
-            })
-        ) {
-            i._doc.isUpload = true;
-        } else i._doc.isUpload = false;
+            //금일 인증 여부
+            if (
+                await Proofshot.findOne({
+                    challengeId: i._doc._id,
+                    createdAt: {
+                        $gte: new Date(today).toISOString(),
+                        $lt: new Date(moment(today).add(1, 'days')).toISOString(),
+                    },
+                })
+            ) {
+                i._doc.isUpload = true;
+            } else i._doc.isUpload = false;
 
-        //회차
-        let pastDays =
-            (moment(today) - moment(moment(i._doc.startAt).format('YYYY-MM-DD'))) /
-            (1000 * 60 * 60 * 24);
-        let round = Math.floor(pastDays / 3) + 1;
-        i._doc.round = round;
+            //회차
+            let pastDays =
+                (moment(today) - moment(moment(i._doc.startAt).format('YYYY-MM-DD'))) /
+                (1000 * 60 * 60 * 24);
+            let round = Math.floor(pastDays / 3) + 1;
+            i._doc.round = round;
+        }
+        console.log(challenges);
+        return res.status(200).json({ challenges });
+    } catch (err) {
+        return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
-
-    console.log(challenges);
-    return res.status(200).json({ challenges });
 });
 
 /**
@@ -107,16 +111,20 @@ router.get('/proofShot', authMiddleware, async (req, res) => {
     // await Proofshot.create({ChallengeId})
     let { user } = res.locals;
     if (user === undefined) {
-        return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
+        return res.status(401).json({ message: '로그인 후 사용하시오' });
     }
 
-    let proofShots = await Proofshot.find({ userId: user._id }).select({
-        _id: 1,
-        imgUrl: 1,
-        createdAt: 1,
-    });
-    console.log(proofShots);
-    return res.status(200).json({ proofShots });
+    try {
+        let proofShots = await Proofshot.find({ userId: user._id }).select({
+            _id: 1,
+            imgUrl: 1,
+            createdAt: 1,
+        });
+        console.log(proofShots);
+        return res.status(200).json({ proofShots });
+    } catch (err) {
+        return res.status(401).json({ message: '잘못된 요청입니다.' });
+    }
 });
 
 /**
@@ -162,16 +170,21 @@ router.get('/proofShot', authMiddleware, async (req, res) => {
 router.get('/proofShot/:proofShotId', authMiddleware, async (req, res) => {
     let { user } = res.locals;
     if (user === undefined) {
-        return res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
+        return res.status(401).json({ message: '로그인 후 사용하시오' });
     }
 
-    const { proofShotId } = req.params;
-    let proofShot = await Proofshot.findOne({
-        _id: proofShotId,
-        //userId: user.userId,
-    });
-    console.log(proofShot);
-    return res.status(200).json({ proofShot });
+    try {
+        const { proofShotId } = req.params;
+        let proofShot = await Proofshot.findOne({
+            _id: proofShotId,
+            //userId: user.userId,
+        });
+        console.log(proofShot);
+        return res.status(200).json({ proofShot });
+    } catch (err) {
+        //console.log(err);
+        return res.status(400).json({ message: '잘못된 요청입니다.' });
+    }
 });
 
 module.exports = router;
