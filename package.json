@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.1086.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
@@ -7,7 +8,10 @@
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^6.2.4"
+    "mongoose": "^6.2.4",
+    "multer": "^1.4.4",
+    "multer-s3": "^2.10.0",
+    "s3": "^4.4.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
