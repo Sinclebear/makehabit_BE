@@ -58,7 +58,50 @@ router.get('/:challengeId/auth', authMiddleware, async (req, res) => {
 
 // 인증페이지 - 인증 완료 (업로드). 작성 필요
 router.post('/:challengeId/proof', authMiddleware, async (req, res) => {
-    res.status(200).json({});
+    try {
+        let { user } = res.locals;
+        // console.log(user);
+        // console.log(user.userId);
+
+        // 비로그인 사용자 처리
+        if (user.userId === undefined) {
+            res.status(401).json({ message: '로그인 후 사용 가능합니다.' });
+        }
+        // proofshot 테이블을 userId로 먼저 조회해서,
+        // "오늘 날짜로" 올린 게시글이 있는경우, 400에러.
+        // 근데 오늘 날짜, 오늘 챌린지Id로 올린 사용자가, 애초에 여기로 접근이 아예 안되야되지 않나.
+        // 한번 더 걸러줘야되나?
+        const { challengeId } = req.params;
+        let today = new Date();
+        let today_date = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        ).toISOString(); // 오늘 날짜 00시를 기준으로 ISOString 으로 변환.
+
+        const todayProofshot = await ProofShot.find({
+            userId: user.userId,
+            challengeId,
+            createdAt: { $gte: today_date },
+        });
+        console.log(todayProofshot);
+        if (todayProofshot.length > 0) {
+            res.status(400).json({ message: '오늘 이 챌린지에 이미 인증한 내역이 있습니다.' });
+        } else {
+            let { imgUrl, challengeTitle, comment } = req.body;
+            const createProofshot = await ProofShot.create({
+                challengeId,
+                userId: user.userId,
+                challengeTitle,
+                imgUrl,
+                comment,
+            });
+            res.status(201).json({ message: '인증샷 등록이 완료되었습니다.' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ message: err.message });
+    }
 });
 
 module.exports = router;
