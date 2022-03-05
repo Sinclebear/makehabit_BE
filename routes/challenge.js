@@ -6,6 +6,7 @@ const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
 
 router.get('/main/recommendation', async (req, res) => {
+    // 챌린지 시작 전인 것만 추천하는 기능 추가
     const { length } = req.query;
     const randomChallenges = await Challenge.aggregate([{ $sample: { size: Number(length) } }]);
     const challenges = randomChallenges.map((item) => {
@@ -71,7 +72,12 @@ router.get('/search', async (req, res) => {
 
 // 카테고리 페이지 목록조회 // 걱정됐죠 ㅜ.ㅜ
 router.get('/category/:categoryId', authMiddleware, async (req, res) => {
-    const { userId } = res.locals.user;
+    let userId;
+    if (!res.locals.user) {
+        userId = '';
+    } else {
+        userId = res.locals.user.userId;
+    }
     const { categoryId } = req.params;
     const { length } = req.query;
     let existUser, userLikes;
