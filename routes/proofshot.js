@@ -15,16 +15,17 @@ router.get('/:challengeId/auth', authMiddleware, async (req, res) => {
             return res.status(401).json({ message: '로그인 후 사용 가능합니다.' });
         }
         const { challengeId } = req.params;
-        let userLikes;
-        if (user) {
-            // 유저값이 있는 경우
-            const existUser = await User.findOne({ _id: user.userId });
-            userLikes = existUser.likes;
-        }
-        console.log(userLikes);
+        // let userLikes;
+        // if (user) {
+        //     // 유저값이 있는 경우
+        //     const existUser = await User.findOne({ _id: user.userId });
+        //     userLikes = existUser.likes;
+        // }
+        // console.log(userLikes);
         const challenge = await Challenge.findById(challengeId).lean();
-        console.log(challenge);
-        // 참가회수
+        // console.log(challenge);
+
+        // 참가회수? 참가자 목록 불러오기 아닌가?
         const joinPeople = challenge.participants;
         challenge['participants'] = joinPeople.length;
         // round
@@ -37,27 +38,27 @@ router.get('/:challengeId/auth', authMiddleware, async (req, res) => {
         } else {
             challenge['round'] = Math.ceil((dateDiff + 1) / 3);
         }
-        console.log(joinPeople);
-        if (user.userId) {
-            console.log(joinPeople, userLikes);
-            if (joinPeople.includes(user.userId)) {
-                challenge['isParticipate'] = true;
-            } else {
-                challenge['isParticipate'] = false;
-            }
-            if (userLikes.includes(challengeId)) {
-                challenge['isLike'] = true;
-            } else {
-                challenge['isLike'] = false;
-            }
-            // 로그인한 유저의 참여여부
-            // 로그인한 유저의 좋아요여부
-        } else {
-            challenge['isLike'] = false;
-            challenge['isParticipate'] = false;
-            challenge['isUpload'] = false;
-            challenge['proofCount'] = false;
-        }
+        // console.log(joinPeople);
+        // if (user.userId) {
+        //     console.log(joinPeople, userLikes);
+        //     if (joinPeople.includes(user.userId)) {
+        //         challenge['isParticipate'] = true;
+        //     } else {
+        //         challenge['isParticipate'] = false;
+        //     }
+        //     if (userLikes.includes(challengeId)) {
+        //         challenge['isLike'] = true;
+        //     } else {
+        //         challenge['isLike'] = false;
+        //     }
+        //     // 로그인한 유저의 참여여부
+        //     // 로그인한 유저의 좋아요여부
+        // } else {
+        //     challenge['isLike'] = false;
+        //     challenge['isParticipate'] = false;
+        //     challenge['isUpload'] = false;
+        //     challenge['proofCount'] = false;
+        // }
         return res.status(200).json(challenge);
     } catch (err) {
         console.log(err);
@@ -88,12 +89,15 @@ router.post('/:challengeId/proof', authMiddleware, async (req, res) => {
             today.getDate()
         ).toISOString(); // 오늘 날짜 00시를 기준으로 ISOString 으로 변환.
 
+        // 오늘 00시 이후에 등록한 인증샷이 있는지 조회.
         const todayProofshot = await ProofShot.find({
             userId: user.userId,
             challengeId,
             createdAt: { $gte: today_date },
         });
-        console.log(todayProofshot);
+        //console.log(todayProofshot);
+
+        // 오늘 00시 이후 등록한 인증샷이 있는 경우, 400 에러 발생 후 튕겨내기.
         if (todayProofshot.length > 0) {
             res.status(400).json({ message: '오늘 이 챌린지에 이미 인증한 내역이 있습니다.' });
         } else {
