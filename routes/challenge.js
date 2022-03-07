@@ -4,7 +4,7 @@ const Challenge = require('../models/challenge');
 const User = require('../models/user');
 const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
-
+// 날짜, 라운드, 참가자수, status, 총인증횟수, 금일 업로드 체크
 router.get('/main/recommendation', async (req, res) => {
     // 챌린지 시작 전인 것만 추천하는 기능 추가
     const { length } = req.query;
@@ -80,19 +80,44 @@ router.get('/category/:categoryId', authMiddleware, async (req, res) => {
     }
     const { categoryId } = req.params;
     const { length } = req.query;
-    let existUser, userLikes;
+    let existUser, userLikes, existChallenges;
     if (userId) {
         //populate objectId를 가지고 다시 조회
         //** projection 은 가져올 때부터 특정 필드 가져오는 작업 findById, projection userLikes가져올 수 있다.
         existUser = await User.findById(userId);
         userLikes = existUser.likes;
     }
-    const existChallenges = await Challenge.find(
-        { category: categoryId },
-        { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-    ) // projection으로 대체가능  질문..5개 가져오는 기준?!
-        .limit(length)
-        .lean();
+    if (categoryId === 'all') {
+        existChallenges = await Challenge.find(
+            {},
+            { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+        ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            .limit(length)
+            .lean();
+    } else if (categoryId === 'new') {
+        existChallenges = await Challenge.find(
+            {},
+            { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+        )
+            .sort({ startAt: -1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            .limit(length)
+            .lean();
+    } else if (categoryId === 'popular') {
+        existChallenges = await Challenge.find(
+            {},
+            { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+        )
+            .sort({ startAt: -1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            .limit(length)
+            .lean();
+    } else {
+        existChallenges = await Challenge.find(
+            { category: categoryId },
+            { _id: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+        ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            .limit(length)
+            .lean();
+    }
     const challenges = existChallenges.map((item) => {
         // challengeId 만들어주는 부준
         const challengeId = item._id.toString();
@@ -254,9 +279,12 @@ router.post('/challenges/:challengeId/join', authMiddleware, async (req, res) =>
         });
         return;
     }
+    // 내가 해야하는 작업 !!
+    // 챌린지 시작 전에만 참가하기 가능 하려면 challenge를 조회했을 때
     const { userId } = res.locals.user;
     const { challengeId } = req.params;
     const existChallenge = await Challenge.findById(challengeId);
+    console.log(existChallenge);
     const participants = existChallenge.participants;
     const existUser = await User.findById(userId);
     const participate = existUser.participate;
