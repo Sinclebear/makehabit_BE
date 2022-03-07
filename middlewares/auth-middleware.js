@@ -2,9 +2,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 module.exports = (req, res, next) => {
+    console.log(req.header);
     const { authorization } = req.headers;
     console.log(req.headers);
-
+    console.log(authorization);
     if (authorization === 'Bearer null') {
         res.locals.user = undefined;
         next();
