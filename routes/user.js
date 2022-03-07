@@ -178,7 +178,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ email }, process.env.JWT_SECRET_KEY);
         return res.status(201).json({
             token,
-            email,
+            nickname: user.nickname,
             message: '로그인 되었습니다.',
         });
     } catch (err) {
