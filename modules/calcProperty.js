@@ -1,7 +1,49 @@
 const moment = require('moment');
 const Proofshot = require('../models/proofShot');
+const User = require('../models/user');
 
 module.exports = {
+    //challegeId 추가하는 함수
+    plusChallengeId: (challenges) => {
+        for (const i of challenges) {
+            i.challengeId = i._id;
+        }
+    },
+    // isLike 계산해주는 함수
+    calcIsLike: async (challenges, user) => {
+        for (const i of challenges) {
+            if (!user) {
+                i.isLike = false;
+            } else {
+                let challengeId = i._id;
+                let existUser = await User.findById(user);
+                let userLikes = existUser.likes;
+                if (userLikes.includes(challengeId)) {
+                    i.isLike = true;
+                } else {
+                    i.isLike = false;
+                }
+            }
+        }
+    },
+    //isParticipate 계산함수
+    calcIsParticipate: async (challenges, user) => {
+        for (const i of challenges) {
+            if (!user) {
+                i.isParticipate = false;
+            } else {
+                let challengeId = i._id;
+                let existUser = await User.findById(user);
+                let userParticipate = existUser.participate;
+                if (userParticipate.includes(challengeId)) {
+                    i.isParticipate = true;
+                } else {
+                    i.isParticipate = false;
+                }
+            }
+        }
+    },
+
     //status 계산
 
     calcStatus: (challenges) => {
@@ -63,6 +105,26 @@ module.exports = {
             ) {
                 i.isUpload = true;
             } else i.isUpload = false;
+        }
+    },
+    //유저 금일 업로드 체크 await
+    calcUserIsUpload: async (challenges, userId) => {
+        let today = new Date(moment().format('YYYY-MM-DD')).toISOString(); //2022-03-05 00:00:00
+        for (const i of challenges) {
+            const todayProofshot = await Proofshot.findOne({
+                challengeId: i._id,
+                userId: userId,
+                createdAt: {
+                    $gte: new Date(moment(today).add(-9, 'hours')).toISOString(),
+                    $lt: new Date(moment(today).add(15, 'hours')).toISOString(),
+                },
+            });
+            console.log(todayProofshot);
+            if (!todayProofshot) {
+                i.isUpload = false;
+            } else {
+                i.isUpload = true;
+            }
         }
     },
 };
