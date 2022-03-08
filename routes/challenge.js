@@ -5,6 +5,7 @@ const User = require('../models/user');
 const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
 const calc = require('../modules/calcProperty');
+const moment = require('moment');
 // 추천 API
 router.get('/main/recommendation', authMiddleware, async (req, res) => {
     try {
@@ -17,11 +18,17 @@ router.get('/main/recommendation', authMiddleware, async (req, res) => {
 
         const { length } = req.query;
         let challenges;
-        if (!length) {
-            challenges = await Challenge.aggregate([{ $sample: { size: 4 } }]);
-        } else {
-            challenges = await Challenge.aggregate([{ $sample: { size: Number(length) } }]);
-        }
+        let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
+
+        challenges = await Challenge.aggregate([
+            {
+                $match: {
+                    startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+                },
+            },
+            { $sample: { size: length ? Number(length) : 4 } },
+        ]);
+
         calc.plusChallengeId(challenges);
         calc.calcParticipants(challenges);
         calc.calcPastDaysAndRound(challenges);
@@ -43,9 +50,15 @@ router.get('/search', authMiddleware, async (req, res) => {
         } else {
             userId = res.locals.user.userId;
         }
+
         const { title } = req.query;
+        let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
+
         const existChallenges = await Challenge.find(
-            { title: { $regex: `${title}` } },
+            {
+                title: { $regex: `${title}` },
+                startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+            },
             { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
         ).lean(); // populate.._doc..
         calc.plusChallengeId(existChallenges);

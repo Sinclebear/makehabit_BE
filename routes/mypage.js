@@ -62,7 +62,7 @@ router.get('/challenge', authMiddleware, async (req, res) => {
 
         let challenges = user.participate;
         calc.calcParticipants(challenges);
-        await calc.calcIsUpload(challenges);
+        await calc.calcUserIsUpload(challenges, user.userId);
         calc.calcPastDaysAndRound(challenges);
         calc.calcStatus(challenges);
         for (const i of challenges) i.challengeId = i._id;
