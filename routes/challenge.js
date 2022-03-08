@@ -5,6 +5,7 @@ const User = require('../models/user');
 const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
 const calc = require('../modules/calcProperty');
+const moment = require('moment');
 // 추천 API
 router.get('/main/recommendation', authMiddleware, async (req, res) => {
     try {
@@ -158,6 +159,10 @@ router.post('/challenges', authMiddleware, async (req, res) => {
         }
         const { userId } = res.locals.user;
         const { title, content, category, thumbnail, startAt, howtoContent } = req.body;
+        console.log(startAt, 'startAt'); // ISO TIME 2022-03-08 00:00:00
+        let toIsoTime = new Date(moment(startAt));
+        console.log(toIsoTime, 'toIsoTime');
+        // moment를 넣은 순간 한국시간으로 바뀜 moment(startAt) === 한국시간 2022-03-08 00:00:00(ISOTIME+9시가)
         const participants = [userId];
         const existUser = await User.findById(userId);
         const participate = existUser.participate;
@@ -166,10 +171,11 @@ router.post('/challenges', authMiddleware, async (req, res) => {
             content,
             category,
             thumbnail,
-            startAt,
+            startAt: toIsoTime,
             howtoContent,
             participants,
         });
+        console.log(createdChallenge);
         const challengeId = createdChallenge.challengeId;
         participate.push(challengeId);
         await User.updateOne({ _id: userId }, { $set: { participate } });
