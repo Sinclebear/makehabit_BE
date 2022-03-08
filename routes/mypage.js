@@ -11,6 +11,12 @@ const User = require('../models/user');
  *    summary: "mypage challenge list 불러오기 (하단 인증 탭)"
  *    description: "mypage challenge list 불러오기 (하단 인증 탭)"
  *    tags: [MyPage]
+ *    parameters:
+ *     - name: status
+ *       in: query
+ *       description: status of item
+ *       schema:
+ *         type: integer
  *    responses:
  *      "200":
  *        description: list 불러오기 성공 시
@@ -39,8 +45,10 @@ const User = require('../models/user');
  *                       challengeId:
  *                         type: string
  */
+
 router.get('/challenge', authMiddleware, async (req, res) => {
     let { user } = res.locals;
+    let { status } = req.query;
 
     if (user === undefined) {
         return res.status(401).json({ message: '로그인 후 사용하시오' });
@@ -56,9 +64,15 @@ router.get('/challenge', authMiddleware, async (req, res) => {
         calc.calcParticipants(challenges);
         await calc.calcIsUpload(challenges);
         calc.calcPastDaysAndRound(challenges);
+        calc.calcStatus(challenges);
         for (const i of challenges) i.challengeId = i._id;
 
-        return res.status(200).json({ challenges });
+        //status가 undefined 인 경우
+        if (!status) return res.status(200).json({ challenges });
+        else
+            return res
+                .status(200)
+                .json({ challenges: challenges.filter((x) => x.status === +status) });
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }

@@ -45,6 +45,7 @@ module.exports = {
     },
 
     //status 계산
+
     calcStatus: (challenges) => {
         for (const i of challenges) {
             const start = i.startAt;
@@ -60,7 +61,6 @@ module.exports = {
             }
         }
     },
-
     //참여자 수 계산
     calcParticipants: (challenges) => {
         for (const i of challenges) {
