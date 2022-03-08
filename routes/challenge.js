@@ -6,9 +6,15 @@ const Proofshot = require('../models/proofShot');
 const authMiddleware = require('../middlewares/auth-middleware');
 const calc = require('../modules/calcProperty');
 // 추천 API
-router.get('/main/recommendation', async (req, res) => {
-    // 챌린지 시작 전인 것만 추천하는 기능 추가해야함..쉽지않음..
+router.get('/main/recommendation', authMiddleware, async (req, res) => {
     try {
+        let userId;
+        if (!res.locals.user) {
+            userId = '';
+        } else {
+            userId = res.locals.user.userId;
+        }
+
         const { length } = req.query;
         let challenges;
         if (!length) {
@@ -20,6 +26,7 @@ router.get('/main/recommendation', async (req, res) => {
         calc.calcParticipants(challenges);
         calc.calcPastDaysAndRound(challenges);
         calc.calcStatus(challenges);
+        await calc.calcIsLike(challenges, userId);
         res.status(200).json({ challenges });
     } catch (err) {
         console.log(err);
@@ -27,9 +34,15 @@ router.get('/main/recommendation', async (req, res) => {
     }
 });
 
-//메인 - 검색기능 //주현님 모먼트 !!
-router.get('/search', async (req, res) => {
+//메인 - 검색기능 // isLike ++++++++++++++++++++++++++++++
+router.get('/search', authMiddleware, async (req, res) => {
     try {
+        let userId;
+        if (!res.locals.user) {
+            userId = '';
+        } else {
+            userId = res.locals.user.userId;
+        }
         const { title } = req.query;
         const existChallenges = await Challenge.find(
             { title: { $regex: `${title}` } },
@@ -39,7 +52,7 @@ router.get('/search', async (req, res) => {
         calc.calcParticipants(existChallenges);
         calc.calcPastDaysAndRound(existChallenges);
         calc.calcStatus(existChallenges);
-
+        await calc.calcIsLike(existChallenges, userId);
         const challenges = existChallenges.sort((a, b) => b.startAt - a.startAt); //날짜 내림차순 으로 정리
         res.status(200).json({ challenges });
     } catch (err) {

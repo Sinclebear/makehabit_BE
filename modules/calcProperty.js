@@ -17,7 +17,7 @@ module.exports = {
             } else {
                 let challengeId = i._id;
                 let existUser = await User.findById(user);
-                let userLikes = existUser.likes || [];
+                let userLikes = existUser.likes;
                 if (userLikes.includes(challengeId)) {
                     i.isLike = true;
                 } else {
@@ -34,7 +34,7 @@ module.exports = {
             } else {
                 let challengeId = i._id;
                 let existUser = await User.findById(user);
-                let userParticipate = existUser.participate || [];
+                let userParticipate = existUser.participate;
                 if (userParticipate.includes(challengeId)) {
                     i.isParticipate = true;
                 } else {
