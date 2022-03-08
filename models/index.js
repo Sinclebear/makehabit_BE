@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-require("dotenv").config();
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 // ec2 데이터베이스
 // const connect = () => {
@@ -13,17 +13,13 @@ require("dotenv").config();
 // };
 
 const connect = () => {
-  mongoose.connect(
-    process.env.AWS_MONGO_DB,
-    { ignoreUndefined: true },
-    (error) => {
-      if (error) {
-        console.log("mongodb error", error);
-      } else {
-        console.log("connected");
-      }
-    }
-  );
+    mongoose.connect(process.env.AWS_MONGO_DB, { ignoreUndefined: true }, (error) => {
+        if (error) {
+            console.log('mongodb error', error);
+        } else {
+            console.log('connected');
+        }
+    });
 };
 
 module.exports = connect;
