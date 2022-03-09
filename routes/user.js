@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi');
 const authMiddleware = require('../middlewares/auth-middleware');
 const bcrypt = require('bcrypt');
+const Character = require('../models/character');
 /**
  * @swagger
  * /api/users/signup:
@@ -94,6 +95,12 @@ router.post('/signup', async (req, res) => {
 
         const user = new User({ email, nickname, password });
         await user.save();
+        await Character.create({
+            userId: user._id,
+            characterCurrentPoint: 1000,
+            equippedItems: [],
+            haveItems: [],
+        });
         return res.status(201).json({ message: '회원가입이 완료되었습니다!' });
     } catch (error) {
         let joiError = error.details[0].message;

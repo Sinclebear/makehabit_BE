@@ -3,6 +3,7 @@ const router = express.Router();
 const ProofShot = require('../models/proofShot');
 const Challenge = require('../models/challenge');
 const User = require('../models/user');
+const Character = require('../models/character');
 const authMiddleware = require('../middlewares/auth-middleware');
 // const upload = require('../modules/multer');
 
@@ -70,6 +71,19 @@ router.post('/:challengeId/proof', authMiddleware, async (req, res) => {
                 imgUrl,
                 comment,
             });
+
+            const totalCnt = await ProofShot.count({
+                userId: user._id,
+                challengeId,
+            });
+            const userCharacter = await Character.findOne({ userId: user._id });
+            if (totalCnt % 3 === 0) {
+                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + 300;
+                await userCharacter.save();
+            } else {
+                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + 100;
+                await userCharacter.save();
+            }
             return res.status(201).json({ message: '인증샷 등록이 완료되었습니다.' });
         }
     } catch (err) {

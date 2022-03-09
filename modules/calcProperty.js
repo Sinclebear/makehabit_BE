@@ -120,7 +120,6 @@ module.exports = {
                     $lt: new Date(moment(today).add(15, 'hours')),
                 },
             });
-            console.log(todayProofshot);
             if (!todayProofshot) {
                 i.isUpload = false;
             } else {

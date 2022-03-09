@@ -58,15 +58,25 @@ router.get('/challenge', authMiddleware, async (req, res) => {
         console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
-            .populate('participate', 'title _id participants thumbnail startAt');
+            .populate({
+                path: 'participate',
+                select: {
+                    _id: 0,
+                    title: 1,
+                    challengeId: '$_id',
+                    participants: 1,
+                    thumbnail: 1,
+                    startAt: 1,
+                    content: 1,
+                },
+            });
 
         let challenges = user.participate;
         calc.calcParticipants(challenges);
         await calc.calcUserIsUpload(challenges, user.userId);
         calc.calcPastDaysAndRound(challenges);
         calc.calcStatus(challenges);
-        for (const i of challenges) i.challengeId = i._id;
-
+        //for (const i of challenges) i.challengeId = i._id;
         //status가 undefined 인 경우
         if (!status) return res.status(200).json({ challenges });
         else
