@@ -2,11 +2,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 module.exports = (req, res, next) => {
-    console.log(req.header);
+    // console.log(req.header);
     const { authorization } = req.headers;
-    console.log(req.headers);
-    console.log(authorization);
-    if (authorization === 'Bearer null') {
+    if (authorization === 'Bearer null' || authorization === undefined) {
+        console.log('req.headers.authorization 내용은 : ', authorization);
         res.locals.user = undefined;
         next();
         //res.status(400).json({ errorMessage: '로그인 후 사용하시오' });
@@ -17,7 +16,7 @@ module.exports = (req, res, next) => {
 
     if (tokenType != 'Bearer') {
         res.status(401).send({
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
         return;
     }
@@ -35,7 +34,7 @@ module.exports = (req, res, next) => {
         //jwt 토큰이 유효하지 않은 경우
         return res.status(401).send({
             user: null,
-            errorMessage: '로그인 후 사용하시오',
+            message: '로그인 후 사용하시오',
         });
     }
 };
