@@ -11,6 +11,7 @@ const userRouter = require('./routes/user');
 const mypageRouter = require('./routes/mypage');
 const proofshotRouter = require('./routes/proofshot');
 const uploadRouter = require('./routes/upload');
+const characterRouter = require('./routes/character');
 connect();
 
 //body 읽기
@@ -24,6 +25,7 @@ app.use('/api', [challengeRouter, userRouter, uploadRouter]);
 app.use('/api/users', userRouter);
 app.use('/api/mypage', mypageRouter);
 app.use('/api/proofshot', proofshotRouter);
+app.use('/api/character', characterRouter);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
