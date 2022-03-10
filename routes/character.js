@@ -34,7 +34,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 item.isOwned = false;
             }
         });
-        res.json({ items, characterCurrentPoint });
+        res.status(200).json({ items, characterCurrentPoint });
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
