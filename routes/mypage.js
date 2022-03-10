@@ -3,6 +3,7 @@ const router = express.Router();
 const Proofshot = require('../models/proofShot');
 const Character = require('../models/character');
 const Items = require('../models/item');
+const Challenge = require('../models/challenge');
 const authMiddleware = require('../middlewares/auth-middleware');
 const calc = require('../modules/calcProperty');
 const User = require('../models/user');
@@ -64,13 +65,12 @@ router.get('/challenge', authMiddleware, async (req, res) => {
             .populate({
                 path: 'participate',
                 select: {
-                    _id: 0,
+                    _id: 1,
                     title: 1,
-                    challengeId: '$_id',
+                    content: 1,
                     participants: 1,
                     thumbnail: 1,
                     startAt: 1,
-                    content: 1,
                 },
             });
 
@@ -79,7 +79,7 @@ router.get('/challenge', authMiddleware, async (req, res) => {
         await calc.calcUserIsUpload(challenges, user.userId);
         calc.calcPastDaysAndRound(challenges);
         calc.calcStatus(challenges);
-        //for (const i of challenges) i.challengeId = i._id;
+        for (const i of challenges) i.challengeId = i._id;
         //status가 undefined 인 경우
         if (!status) return res.status(200).json({ challenges });
         else
@@ -101,17 +101,30 @@ router.get('/like', authMiddleware, async (req, res) => {
     }
 
     try {
-        console.log(user);
+        // console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
-            .populate('likes', 'title _id participants thumbnail startAt');
+            .populate({
+                path: 'likes',
+                select: {
+                    _id: 1,
+                    title: 1,
+                    participants: 1,
+                    thumbnail: 1,
+                    startAt: 1,
+                },
+            });
+        // console.log(user);
 
-        let challenges = user.likes;
-        calc.calcParticipants(challenges);
-        await calc.calcUserIsUpload(challenges, user.userId);
-        calc.calcPastDaysAndRound(challenges);
-        calc.calcStatus(challenges);
-        await calc.calcIsLike(challenges, user._id); // 좋아요 내용 추가
+        let raw_challenges = user.likes;
+        calc.calcStatus(raw_challenges); // status 필드 추가
+        let challenges = raw_challenges.filter((challenge) => {
+            return challenge.status === 1; // `시작 전` 상태인 챌린지들만 보여주기
+        });
+        calc.calcParticipants(challenges); // 참여자 수 필드 추가
+        // await calc.calcUserIsUpload(challenges, user.userId);
+        // calc.calcPastDaysAndRound(challenges);
+        await calc.calcIsLike(challenges, user._id); // 좋아요 필드 추가
         for (const i of challenges) i.challengeId = i._id;
 
         //status가 undefined 인 경우
@@ -119,7 +132,7 @@ router.get('/like', authMiddleware, async (req, res) => {
         else
             return res
                 .status(200)
-                .json({ challenges: challenges.filter((x) => x.status === +status) });
+                .json({ challenges: challenges.filter((x) => x.status === +status) }); // status 순으로 정렬. 추후에 스펙이 바뀐다면.. 유지.
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
@@ -260,12 +273,18 @@ router.get('/character', authMiddleware, async (req, res) => {
                 path: 'equippedItems',
                 select: { _id: 0, itemId: '$_id', itemImgUrl: 1 },
             });
+        //console.log(user);
 
-        /**
-         *
-         * nickname, totalProofCount, totalParticipateCount 연산해서 character에 넣어야함.
-         */
+        let myUserInfo = await User.findById(user._id);
+        character.nickname = myUserInfo.nickname; // character 객체에 `닉네임` 추가
+        character.totalParticipateCount = myUserInfo.participate.length; // `총 챌린지 참가 수` 추가
+        //console.log(myUserInfo);
 
+        let myProofShots = await Proofshot.find({ userId: user._id });
+        character.totalProofCount = myProofShots.length; // `총 인증샷 횟수` 추가
+        //console.log(myProofShots);
+
+        //console.log(character);
         return res.status(200).json({ character });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });
