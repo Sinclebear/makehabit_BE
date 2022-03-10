@@ -76,15 +76,19 @@ router.post('/:challengeId/proof', authMiddleware, async (req, res) => {
                 userId: user._id,
                 challengeId,
             });
+
+            let point;
             const userCharacter = await Character.findOne({ userId: user._id });
             if (totalCnt % 3 === 0) {
-                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + 300;
+                point = 300;
+                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
                 await userCharacter.save();
             } else {
-                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + 100;
+                point = 100;
+                userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
                 await userCharacter.save();
             }
-            return res.status(201).json({ message: '인증샷 등록이 완료되었습니다.' });
+            return res.status(201).json({ point, message: '인증샷 등록이 완료되었습니다.' });
         }
     } catch (err) {
         console.log(err);
