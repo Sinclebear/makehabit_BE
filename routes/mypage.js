@@ -3,6 +3,7 @@ const router = express.Router();
 const Proofshot = require('../models/proofShot');
 const Character = require('../models/character');
 const Items = require('../models/item');
+const Challenge = require('../models/challenge');
 const authMiddleware = require('../middlewares/auth-middleware');
 const calc = require('../modules/calcProperty');
 const User = require('../models/user');
@@ -249,12 +250,18 @@ router.get('/character', authMiddleware, async (req, res) => {
                 path: 'equippedItems',
                 select: { _id: 0, itemId: '$_id', itemImgUrl: 1 },
             });
+        //console.log(user);
 
-        /**
-         *
-         * nickname, totalProofCount, totalParticipateCount 연산해서 character에 넣어야함.
-         */
+        let myUserInfo = await User.findById(user._id);
+        character.nickname = myUserInfo.nickname; // character 객체에 `닉네임` 추가
+        character.totalParticipateCount = myUserInfo.participate.length; // `총 챌린지 참가 수` 추가
+        //console.log(myUserInfo);
 
+        let myProofShots = await Proofshot.find({ userId: user._id });
+        character.totalProofCount = myProofShots.length; // `총 인증샷 횟수` 추가
+        //console.log(myProofShots);
+
+        //console.log(character);
         return res.status(200).json({ character });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });
