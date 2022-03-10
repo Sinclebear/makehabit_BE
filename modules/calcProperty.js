@@ -70,10 +70,10 @@ module.exports = {
     },
 
     //총 인증횟수 계산 await
-    calcProofCnt: async (challenges, user) => {
+    calcProofCnt: async (challenges, userId) => {
         for (const i of challenges) {
             let challengeId = i._id;
-            let proofCount = await Proofshot.count({ challengeId, userId: user.userId });
+            let proofCount = await Proofshot.count({ challengeId, userId });
             i.proofCount = proofCount;
         }
     },

@@ -1,4 +1,7 @@
 {
+    "scripts": {
+        "test": "jest --detectOpenHandles --forceExit"
+    },
     "dependencies": {
         "aws-sdk": "^2.1086.0",
         "bcrypt": "^5.0.1",
