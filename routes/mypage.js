@@ -91,17 +91,30 @@ router.get('/like', authMiddleware, async (req, res) => {
     }
 
     try {
-        console.log(user);
+        // console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
-            .populate('likes', 'title _id participants thumbnail startAt');
+            .populate({
+                path: 'likes',
+                select: {
+                    _id: 1,
+                    title: 1,
+                    participants: 1,
+                    thumbnail: 1,
+                    startAt: 1,
+                },
+            });
+        // console.log(user);
 
-        let challenges = user.likes;
-        calc.calcParticipants(challenges);
-        await calc.calcUserIsUpload(challenges, user.userId);
-        calc.calcPastDaysAndRound(challenges);
-        calc.calcStatus(challenges);
-        await calc.calcIsLike(challenges, user._id); // 좋아요 내용 추가
+        let raw_challenges = user.likes;
+        calc.calcStatus(raw_challenges); // status 필드 추가
+        let challenges = raw_challenges.filter((challenge) => {
+            return challenge.status === 1; // `시작 전` 상태인 챌린지들만 보여주기
+        });
+        calc.calcParticipants(challenges); // 참여자 수 필드 추가
+        // await calc.calcUserIsUpload(challenges, user.userId);
+        // calc.calcPastDaysAndRound(challenges);
+        await calc.calcIsLike(challenges, user._id); // 좋아요 필드 추가
         for (const i of challenges) i.challengeId = i._id;
 
         //status가 undefined 인 경우
@@ -109,7 +122,7 @@ router.get('/like', authMiddleware, async (req, res) => {
         else
             return res
                 .status(200)
-                .json({ challenges: challenges.filter((x) => x.status === +status) });
+                .json({ challenges: challenges.filter((x) => x.status === +status) }); // status 순으로 정렬. 추후에 스펙이 바뀐다면.. 유지.
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
