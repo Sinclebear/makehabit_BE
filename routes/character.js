@@ -19,10 +19,20 @@ router.get('/', authMiddleware, async (req, res) => {
             { characterCurrentPoint: 1, equippedItems: 1, haveItems: 1 }
         );
         const { characterCurrentPoint, equippedItems, haveItems } = existCharacter; // isEquip이랑 isOwned 만들기 위한 포석
-        const items = await Item.find({}).sort({ category: 1, categoryItemNum: 1 }).lean(); // 이중정렬 그런데 이거 말고 내 마음대로 정렬할 수 있는 방법?!
+        const items = await Item.find({})
+            .select({
+                _id: 0,
+                itemId: '$_id',
+                category: 1,
+                categoryItemNum: 1,
+                itemImgUrl: 1,
+                itemName: 1,
+                price: 1,
+            })
+            .sort({ category: 1, categoryItemNum: 1 })
+            .lean(); // 이중정렬 그런데 이거 말고 내 마음대로 정렬할 수 있는 방법?!
         items.map((item) => {
-            const itemId = item._id;
-            item.itemId = itemId;
+            const { itemId } = item; // 수정 SELECT ①
             if (equippedItems.includes(itemId)) {
                 item.isEquip = true;
             } else {
@@ -34,7 +44,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 item.isOwned = false;
             }
         });
-        res.status(200).json({ items, characterCurrentPoint });
+        res.status(200).json({ characterCurrentPoint, items });
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
