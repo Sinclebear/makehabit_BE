@@ -3,6 +3,7 @@ const express = require('express');
 const { swaggerUi, specs } = require('./modules/swagger');
 const connect = require('./models/index');
 const cors = require('cors');
+const passportConfig = require('./passport'); //이애 연결해주고
 
 const port = 3000;
 const app = express();
@@ -18,6 +19,7 @@ connect();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+passportConfig(); //passport의 index.js에서 내보낸 함수 실행
 
 // 라우터 배치
 app.use('/api', [challengeRouter, userRouter, uploadRouter]);
