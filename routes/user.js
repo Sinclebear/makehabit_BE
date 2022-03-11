@@ -6,6 +6,9 @@ const joi = require('joi');
 const authMiddleware = require('../middlewares/auth-middleware');
 const bcrypt = require('bcrypt');
 const Character = require('../models/character');
+const passport = require('passport');
+const authCtl = require('../controller/auth');
+
 /**
  * @swagger
  * /api/users/signup:
@@ -318,5 +321,8 @@ router.get('/checkLogin', authMiddleware, async (req, res) => {
         nickname: user.nickname,
     });
 });
+
+router.get('/kakao', passport.authenticate('kakao'));
+router.get('/kakao/callback', authCtl.kakaoCallback);
 
 module.exports = router;

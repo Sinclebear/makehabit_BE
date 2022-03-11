@@ -336,19 +336,26 @@ router.get('/createtest', authMiddleware, async (req, res) => {
     // });
 
     // 임의 캐릭터 추가.
-    // await Character.create({
-    //     userId: mongoose.Types.ObjectId('6223479ab51335cde2c90ee6'),
-    //     characterCurrentPoint: 2000,
-    //     equippedItems: [
-    //         mongoose.Types.ObjectId('6228c28062a950a467600673'),
-    //         mongoose.Types.ObjectId('6228c28062a950a467600675'),
-    //         mongoose.Types.ObjectId('6228c28062a950a467600677'),
-    //         mongoose.Types.ObjectId('6228c28062a950a467600679'),
-    //         mongoose.Types.ObjectId('6228c28062a950a46760067b'),
-    //     ],
-    //     haveItems: [],
-    // });
+    await Character.create({
+        userId: mongoose.Types.ObjectId('6225beaf5290efcb7e5bfab8'),
+        characterCurrentPoint: 50000,
+        equippedItems: [
+            mongoose.Types.ObjectId('6228c28062a950a467600673'),
+            mongoose.Types.ObjectId('6228c28062a950a467600675'),
+            mongoose.Types.ObjectId('6228c28062a950a467600677'),
+            mongoose.Types.ObjectId('6228c28062a950a467600679'),
+            mongoose.Types.ObjectId('6228c28062a950a46760067b'),
+        ],
+        haveItems: [
+            mongoose.Types.ObjectId('6228c28062a950a467600673'),
+            mongoose.Types.ObjectId('6228c28062a950a467600675'),
+            mongoose.Types.ObjectId('6228c28062a950a467600677'),
+            mongoose.Types.ObjectId('6228c28062a950a467600679'),
+            mongoose.Types.ObjectId('6228c28062a950a46760067b'),
+        ],
+    });
     return res.send('success');
 });
 */
+
 module.exports = router;
