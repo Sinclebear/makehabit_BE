@@ -13,13 +13,10 @@ require('dotenv').config();
 // };
 
 const connect = () => {
-    mongoose.connect(process.env.AWS_MONGO_DB, { ignoreUndefined: true }, (error) => {
-        if (error) {
-            console.log('mongodb error', error);
-        } else {
-            console.log('connected');
-        }
-    });
+    mongoose
+        .connect(process.env.AWS_MONGO_DB, {
+            ignoreUndefined: true,
+        })
+        .catch((err) => console.log(err));
 };
-
 module.exports = connect;
