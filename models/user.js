@@ -15,7 +15,6 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: true,
         },
         likes: {
             type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Challenges' }],
@@ -23,7 +22,7 @@ const userSchema = new mongoose.Schema(
         participate: {
             type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Challenges' }],
         },
-        kakaoToken: {
+        provider: {
             type: String,
         },
     },
