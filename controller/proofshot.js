@@ -1,8 +1,6 @@
 const ProofShot = require('../models/proofShot');
 const Challenge = require('../models/challenge');
 const Character = require('../models/character');
-// const upload = require('../modules/multer');
-
 // 인증페이지 - 인증페이지 조회 (챌린지 상세페이지 조회와 동일. 필요한 요소만 뽑아서 보내도록 수정.)
 async function authProofshot(req, res) {
     try {
@@ -11,12 +9,28 @@ async function authProofshot(req, res) {
         if (user === undefined) {
             return res.status(401).json({ message: '로그인 후 사용 가능합니다.' });
         }
+
         const { challengeId } = req.params;
-        const [challenge] = await Challenge.find(
-            { _id: challengeId },
-            { challengeId: challengeId, challengeTitle: 'title', howtoContent: 'howtoContent' }
-        ).lean();
+        const challenge = await Challenge.findById(challengeId).lean();
         // console.log(challenge);
+
+        if (!user.participate.includes(challengeId)) {
+            return res.status(401).json({ message: '참여 중인 첼린지만 인증이 가능합니다.' });
+        }
+
+        // 참가회수? 참가자 목록 불러오기 아닌가?
+        const joinPeople = challenge.participants;
+        challenge['participants'] = joinPeople.length;
+        // round
+        const start = challenge.startAt;
+        const cur = new Date().toLocaleDateString();
+        const end = new Date(cur);
+        const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
+        if (dateDiff < 0) {
+            challenge['round'] = '라운드 시작 전입니다.';
+        } else {
+            challenge['round'] = Math.ceil((dateDiff + 1) / 3);
+        }
         return res.status(200).json(challenge);
     } catch (err) {
         console.log(err);
