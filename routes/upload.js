@@ -1,9 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../modules/multer');
-const uploadCtl = require('../controller/upload');
+
 //image upload to s3 사진 1개씩 저장, upload.single or
-router.post('/image', upload.single('image'), uploadCtl.imageUpload);
+router.post('/image', upload.single('image'), async (req, res) => {
+    try {
+        const file = await req.file;
+        console.log(file);
+        const result = await file.location;
+        console.log(result);
+        //사진 경로가 있는 주소를  imgurl이라는 이름으로 저장
+        res.status(200).json({ imgUrl: result });
+    } catch (e) {
+        console.log(e);
+    }
+});
 
 // // 이미지 저장 여러 개
 // router.post('/image', upload.array('image', 5), async (req, res) => {
