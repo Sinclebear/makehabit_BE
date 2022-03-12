@@ -11,12 +11,12 @@ async function authProofshot(req, res) {
         }
 
         const { challengeId } = req.params;
-        const challenge = await Challenge.findById(challengeId).lean();
-        // console.log(challenge);
-
         if (!user.participate.includes(challengeId)) {
             return res.status(401).json({ message: '참여 중인 첼린지만 인증이 가능합니다.' });
         }
+
+        const challenge = await Challenge.findById(challengeId).lean();
+        // console.log(challenge);
 
         // 참가회수? 참가자 목록 불러오기 아닌가?
         const joinPeople = challenge.participants;
@@ -54,6 +54,10 @@ async function uploadProofshot(req, res) {
         // 근데 오늘 날짜, 오늘 챌린지Id로 올린 사용자가, 애초에 여기로 접근이 아예 안되야되지 않나.
         // 한번 더 걸러줘야되나?
         const { challengeId } = req.params;
+        if (!user.participate.includes(challengeId)) {
+            return res.status(401).json({ message: '참여 중인 첼린지만 인증이 가능합니다.' });
+        }
+
         let today = new Date();
         let today_date = new Date(
             today.getFullYear(),
