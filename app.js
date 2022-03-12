@@ -5,7 +5,6 @@ const connect = require('./models/index');
 const cors = require('cors');
 const passportConfig = require('./passport'); //이애 연결해주고
 
-const port = 3000;
 const app = express();
 const challengeRouter = require('./routes/challenge');
 const userRouter = require('./routes/user');
@@ -22,7 +21,7 @@ app.use(cors());
 passportConfig(); //passport의 index.js에서 내보낸 함수 실행
 
 // 라우터 배치
-app.use('/api', [challengeRouter, userRouter, uploadRouter]);
+app.use('/api', [challengeRouter, uploadRouter]);
 
 app.use('/api/users', userRouter);
 app.use('/api/mypage', mypageRouter);
@@ -35,6 +34,4 @@ app.get('/', (req, res) => {
     res.status(200).send('hello world');
 });
 
-app.listen(port, () => {
-    console.log('running on port', port);
-});
+module.exports = app;
