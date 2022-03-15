@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const challengeCtl = require('../controller/challenge');
+//api
+
 // 추천 API
 router.get('/main/recommendation', authMiddleware, challengeCtl.recommendChallenge);
 
@@ -10,6 +12,7 @@ router.get('/search', authMiddleware, challengeCtl.searchChallenge);
 
 // 카테고리 페이지 목록조회 // 걱정됐죠 ㅜ.ㅜ
 router.get('/category/:categoryId', authMiddleware, challengeCtl.getCategoryList);
+
 // 상세조회 API
 router.get('/challenges/:challengeId', authMiddleware, challengeCtl.getDetailChallenge);
 

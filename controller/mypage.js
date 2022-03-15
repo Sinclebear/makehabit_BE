@@ -39,7 +39,7 @@ async function getMyChallenge(req, res) {
         else
             return res
                 .status(200)
-                .json({ challenges: challenges.filter((x) => x.status === +status) });
+                .json({ challenges: challenges.filter((el) => el.status === +status) });
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }

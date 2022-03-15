@@ -78,7 +78,7 @@ async function uploadProofshot(req, res) {
             res.status(400).json({ message: '오늘 이 챌린지에 이미 인증한 내역이 있습니다.' });
         } else {
             let { imgUrl, challengeTitle, comment } = req.body;
-            const createProofshot = await ProofShot.create({
+            await ProofShot.create({
                 challengeId,
                 userId: user.userId,
                 challengeTitle,

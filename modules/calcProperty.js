@@ -89,25 +89,6 @@ module.exports = {
         }
     },
 
-    // //금일 업로드 체크 await
-    // calcIsUpload: async (challenges) => {
-    //     let today = moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
-    //     for (const i of challenges) {
-    //         //금일 인증 여부
-    //         if (
-    //             await Proofshot.findOne({
-    //                 challengeId: i._id,
-    //                 createdAt: {
-    //                     $gte: new Date(today).toISOString(),
-    //                     $lt: new Date(moment(today).add(1, 'days')).toISOString(),
-    //                 },
-    //             })
-    //         ) {
-    //             i.isUpload = true;
-    //         } else i.isUpload = false;
-    //     }
-    // },
-
     //유저 금일 업로드 체크 await
     calcUserIsUpload: async (challenges, userId) => {
         let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00Z     15:00Z
