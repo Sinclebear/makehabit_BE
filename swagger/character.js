@@ -14,7 +14,7 @@
  * @swagger
  * /api/character:
  *   post:
- *    summary: "아이템 구매 및 저장 -(임시 작동 안됨)"
+ *    summary: "아이템 구매 및 저장"
  *    description: "로그인한 유저의 포인트로 아이템을 캐릭터 아이템을 구매 및 저장한다."
  *    tags: [Character]
  *    requestBody:
