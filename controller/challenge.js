@@ -82,34 +82,52 @@ async function getCategoryList(req, res) {
         const { categoryId } = req.params;
         const { length } = req.query;
         let existChallenges;
+        let today = new Date(moment().format('YYYY-MM-DD'));
         if (categoryId === 'all') {
             existChallenges = await Challenge.find(
-                {},
+                { startAt: { $gt: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
         } else if (categoryId === 'new') {
             existChallenges = await Challenge.find(
-                {},
-                { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
+                {
+                    startAt: {
+                        $gt: new Date(moment(today).add(-9, 'hours')),
+                        $lt: new Date(moment(today).add(7, 'days').add(15, 'hours')),
+                    },
+                },
+                {
+                    _id: 1,
+                    category: 1,
+                    participants: 1,
+                    thumbnail: 1,
+                    title: 1,
+                    startAt: 1, //{ $gte: today_date }
+                }
             )
-                .sort({ startAt: -1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
                 .limit(length)
                 .lean();
         } else if (categoryId === 'popular') {
-            existChallenges = await Challenge.find(
-                {},
+            const notSortedExistChallenges = await Challenge.find(
+                { startAt: { $gt: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             )
-                .sort({ startAt: -1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
                 .limit(length)
                 .lean();
+            existChallenges = notSortedExistChallenges.sort(
+                (a, b) => b.participants.length - a.participants.length
+            );
         } else {
             existChallenges = await Challenge.find(
                 { category: categoryId },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
         }
