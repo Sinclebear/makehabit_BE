@@ -102,7 +102,9 @@ async function uploadProofshot(req, res) {
                 userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
                 await userCharacter.save();
             }
-            return res.status(201).json({ point, message: '인증샷 등록이 완료되었습니다.' });
+            return res
+                .status(201)
+                .json({ totalCnt, point, message: '인증샷 등록이 완료되었습니다.' });
         }
     } catch (err) {
         console.log(err);

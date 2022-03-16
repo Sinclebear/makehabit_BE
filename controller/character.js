@@ -78,21 +78,19 @@ async function buyOrChangeItem(req, res) {
             console.log('구매가능');
             //여기는 새로운 아이템 찾아서 haveItems에 추가하는 부분
 
-            console.log(items);
-            console.log(typeof items);
-
             items.map((item) => {
                 if (!haveItems.includes(item)) {
                     haveItems.push(item);
                 }
             });
+
             console.log('test');
             //가격이랑 equippedItems이랑 haveItems 수정
             await Character.updateOne(
                 { userId },
                 { $set: { characterCurrentPoint: newPrice, equippedItems: items, haveItems } }
             );
-            console.log('test2');
+            console.log('test');
 
             res.status(201).json({ message: '구매완료' });
         }

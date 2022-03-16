@@ -187,7 +187,7 @@ async function writeChallenge(req, res) {
         const challengeId = createdChallenge.challengeId;
         participate.push(challengeId);
         await User.updateOne({ _id: userId }, { $set: { participate } });
-        res.status(201).json({ message: '챌린지 작성이 완료되었습니다.' }); // created : 201
+        res.status(201).json({ challengeId, message: '챌린지 작성이 완료되었습니다.' }); // created : 201
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err.message });

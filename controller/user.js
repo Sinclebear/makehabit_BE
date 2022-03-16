@@ -58,8 +58,20 @@ async function signup(req, res) {
         await Character.create({
             userId: user._id,
             characterCurrentPoint: 1000,
-            equippedItems: [],
-            haveItems: [],
+            equippedItems: [
+                '622b332f022751d61035c17a',
+                '622b34385117ac653cd995c7',
+                '622b339860df6e1088fb4590',
+                '622b32eb9b007e54a2bbfcb9',
+                '622b34385117ac653cd995c8',
+            ],
+            haveItems: [
+                '622b332f022751d61035c17a',
+                '622b34385117ac653cd995c7',
+                '622b339860df6e1088fb4590',
+                '622b32eb9b007e54a2bbfcb9',
+                '622b34385117ac653cd995c8',
+            ],
         });
         return res.status(201).json({ message: '회원가입이 완료되었습니다!' });
     } catch (error) {

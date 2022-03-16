@@ -21,7 +21,7 @@
  *      description: totalPrice,items from body
  *      required: true
  *      content:
- *        application/x-www-form-urlencoded:
+ *        application/json:
  *          schema:
  *            type: object
  *            properties:
@@ -30,7 +30,7 @@
  *                items:
  *                  type: string
  *              totalPrice:
- *                type: string
+ *                type: number
  *                description: "전체 구매 비용"
  *    responses:
  *      "200":
