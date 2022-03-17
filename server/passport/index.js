@@ -4,6 +4,7 @@ const Character = require('../models/character');
 const User = require('../models/user.js');
 
 module.exports = () => {
+    console.log('test');
     passport.use(
         new KakaoStrategy(
             {
