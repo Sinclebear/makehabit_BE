@@ -31,7 +31,7 @@ app.use('/api/character', characterRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get('/', (req, res) => {
-    res.status(200).send('hello world');
+    res.status(200).send('hello world + ci_cd');
 });
 
 module.exports = app;
