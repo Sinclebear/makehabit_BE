@@ -31,7 +31,7 @@ app.use('/api/character', characterRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.get('/', (req, res) => {
-    res.status(200).send('hello world + ci_cd + main도 바꿈');
+    res.status(200).send('hello world + ci_cd + main도 바꿈 + workflows 폴더에 넣음');
 });
 
 module.exports = app;
