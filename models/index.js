@@ -16,6 +16,7 @@ const connect = () => {
     mongoose
         .connect(process.env.AWS_MONGO_DB, {
             ignoreUndefined: true,
+            useNewUrlParser: true,
         })
         .catch((err) => console.log(err));
 };
