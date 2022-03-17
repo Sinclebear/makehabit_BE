@@ -13,4 +13,4 @@ cd server
 sudo rm -rf node_modules
 sudo npm cache clean --force && npm i
 sudo pm2 kill
-sudo pm2 start server.js
+sudo pm2 start server.js --log-date-format "YYYY-MM-DD hh-mm-ss"
