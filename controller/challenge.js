@@ -124,7 +124,10 @@ async function getCategoryList(req, res) {
             );
         } else {
             existChallenges = await Challenge.find(
-                { category: categoryId },
+                {
+                    category: categoryId,
+                    startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+                },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             ) // projection으로 대체가능  질문..5개 가져오는 기준?!
                 .sort({ startAt: 1 })
@@ -205,7 +208,7 @@ async function writeChallenge(req, res) {
         const challengeId = createdChallenge.challengeId;
         participate.push(challengeId);
         await User.updateOne({ _id: userId }, { $set: { participate } });
-        res.status(201).json({ message: '챌린지 작성이 완료되었습니다.' }); // created : 201
+        res.status(201).json({ message: '챌린지 작성이 완료되었습니다.', challengeId }); // created : 201
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err.message });
