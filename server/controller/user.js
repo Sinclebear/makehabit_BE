@@ -59,18 +59,18 @@ async function signup(req, res) {
             userId: user._id,
             characterCurrentPoint: 1000,
             equippedItems: [
-                '622b332f022751d61035c17a',
-                '622b34385117ac653cd995c7',
-                '622b339860df6e1088fb4590',
-                '622b32eb9b007e54a2bbfcb9',
-                '622b34385117ac653cd995c8',
+                '62345f283a3469d4462a5e7f',
+                '62345f4c3a3469d4462a5e80',
+                '62345f683a3469d4462a5e81',
+                '62345f7b3a3469d4462a5e82',
+                '62345f933a3469d4462a5e83',
             ],
             haveItems: [
-                '622b332f022751d61035c17a',
-                '622b34385117ac653cd995c7',
-                '622b339860df6e1088fb4590',
-                '622b32eb9b007e54a2bbfcb9',
-                '622b34385117ac653cd995c8',
+                '62345f283a3469d4462a5e7f',
+                '62345f4c3a3469d4462a5e80',
+                '62345f683a3469d4462a5e81',
+                '62345f7b3a3469d4462a5e82',
+                '62345f933a3469d4462a5e83',
             ],
         });
         return res.status(201).json({ message: '회원가입이 완료되었습니다!' });
