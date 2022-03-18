@@ -35,6 +35,13 @@ async function getMyChallenge(req, res) {
         calc.calcStatus(challenges);
         for (const i of challenges) i.challengeId = i._id;
         //status가 undefined 인 경우
+        challenges.sort((a, b) => {
+            if (b.status === a.status) {
+                return a.isUpload - b.isUpload;
+            }
+            return a.status - b.status;
+        });
+        console.log(challenges);
         if (!status) return res.status(200).json({ challenges });
         else
             return res
