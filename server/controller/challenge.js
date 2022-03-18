@@ -24,7 +24,7 @@ async function recommendChallenge(req, res) {
             },
             { $sample: { size: length ? Number(length) : 4 } },
         ]);
-
+        challenges = challenges.sort((a, b) => a.startAt - b.startAt);
         calc.plusChallengeId(challenges);
         calc.calcParticipants(challenges);
         calc.calcPastDaysAndRound(challenges);
@@ -56,13 +56,15 @@ async function searchChallenge(req, res) {
                 startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
             },
             { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-        ).lean(); // populate.._doc..
+        )
+            .sort({ startAt: 1 })
+            .lean(); // populate.._doc..
         calc.plusChallengeId(existChallenges);
         calc.calcParticipants(existChallenges);
         calc.calcPastDaysAndRound(existChallenges);
         calc.calcStatus(existChallenges);
         await calc.calcIsLike(existChallenges, userId);
-        const challenges = existChallenges.sort((a, b) => b.startAt - a.startAt); //날짜 내림차순 으로 정리
+        const challenges = existChallenges; //날짜 내림차순 으로 정리
         res.status(200).json({ challenges });
     } catch (err) {
         console.log(err);
