@@ -39,7 +39,7 @@ test('searchChallenge() 에 정상적인 값 입력시 res.json 이 호출된다
             startAt: new Date('2022-03-10'),
         },
     ]);
-    Challenge.find = jest.fn(() => ({ lean: mockedLean }));
+    Challenge.find = jest.fn(() => ({ sort: () => ({ lean: mockedLean }) }));
 
     let res = await challengeCtl.searchChallenge(
         {
