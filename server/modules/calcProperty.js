@@ -80,9 +80,9 @@ module.exports = {
 
     //경과 날짜, round 계산
     calcPastDaysAndRound: (challenges) => {
-        let today = moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
+        let today = Date.now(); //moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
         for (const i of challenges) {
-            let pastDays = (moment(today) - moment(i.startAt)) / (1000 * 60 * 60 * 24);
+            let pastDays = (new Date(today) - new Date(i.startAt)) / (1000 * 60 * 60 * 24);
             pastDays += 1;
             i.pastDays = pastDays;
             i.round = Math.floor((pastDays - 1) / 3) + 1;
