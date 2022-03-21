@@ -66,7 +66,7 @@ test('req에 status가 주어졌을때 내가 참여한 첼린지 중에서 해�
     });
 });
 
-test('req에 status가 주어지지 않으면 내가 참여했던 모든 첼린지를 가져온다.', async () => {
+test('req에 status가 주어지지 않으면 내가 참여했던 모든 첼린지를 정렬된 형태로 가져온다.', async () => {
     User.findOne = jest.fn(() => ({
         lean: () => ({
             populate: () => ({
@@ -114,16 +114,6 @@ test('req에 status가 주어지지 않으면 내가 참여했던 모든 첼린�
     expect(res).toEqual({
         challenges: [
             {
-                _id: 1,
-                challengeId: 1,
-                title: 'testTitle',
-                content: 'testContent',
-                participants: 3,
-                thumbnail: 'testUrl',
-                startAt: '2022-03-14',
-                status: 2,
-            },
-            {
                 _id: 2,
                 challengeId: 2,
                 title: 'testTitle2',
@@ -132,6 +122,16 @@ test('req에 status가 주어지지 않으면 내가 참여했던 모든 첼린�
                 thumbnail: 'testUrl2',
                 startAt: '2022-03-15',
                 status: 1,
+            },
+            {
+                _id: 1,
+                challengeId: 1,
+                title: 'testTitle',
+                content: 'testContent',
+                participants: 3,
+                thumbnail: 'testUrl',
+                startAt: '2022-03-14',
+                status: 2,
             },
         ],
     });
