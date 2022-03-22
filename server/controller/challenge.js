@@ -15,10 +15,10 @@ async function recommendChallenge(req, res) {
         const { length } = req.query;
         let challenges;
         let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
-
         challenges = await Challenge.find({
             startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
         }).lean();
+
         calc.calcUserLikes(challenges);
         challenges = challenges.sort((a, b) => b.likeUsers - a.likeUsers);
         if (length) {
