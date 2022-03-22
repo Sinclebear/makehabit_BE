@@ -68,6 +68,11 @@ module.exports = {
             i.participants = i.participants.length;
         }
     },
+    calcUserLikes: (challenges) => {
+        for (const i of challenges) {
+            i.likeUsers = i.likeUsers.length;
+        }
+    },
 
     //총 인증횟수 계산 await
     calcProofCnt: async (challenges, userId) => {
