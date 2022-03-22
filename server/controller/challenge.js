@@ -15,16 +15,15 @@ async function recommendChallenge(req, res) {
         const { length } = req.query;
         let challenges;
         let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
+        challenges = await Challenge.find({
+            startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+        }).lean();
 
-        challenges = await Challenge.aggregate([
-            {
-                $match: {
-                    startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
-                },
-            },
-            { $sample: { size: length ? Number(length) : 4 } },
-        ]);
-        challenges = challenges.sort((a, b) => a.startAt - b.startAt);
+        calc.calcUserLikes(challenges);
+        challenges = challenges.sort((a, b) => b.likeUsers - a.likeUsers);
+        if (length) {
+            challenges = challenges.slice(0, length);
+        }
         calc.plusChallengeId(challenges);
         calc.calcParticipants(challenges);
         calc.calcPastDaysAndRound(challenges);
@@ -314,9 +313,13 @@ async function likeChallenge(req, res) {
         const { challengeId } = req.params;
         const existUser = await User.findById(userId);
         const existLikes = existUser.likes;
+        const existChallenge = await Challenge.findById(challengeId);
+        const likeUsers = existChallenge.likeUsers;
         if (!existLikes.includes(challengeId)) {
             existLikes.push(challengeId);
+            likeUsers.push(userId);
             await User.updateOne({ _id: userId }, { $set: { likes: existLikes } });
+            await Challenge.updateOne({ _id: challengeId }, { $set: { likeUsers: likeUsers } });
             res.status(201).json({ message: '찜하기 성공' });
         } else {
             res.status(400).json({ message: '찜하기 실패' });
@@ -339,9 +342,13 @@ async function likeCancelChallenge(req, res) {
         const { challengeId } = req.params;
         const existUser = await User.findById(userId);
         const existLikes = existUser.likes;
+        const existChallenge = await Challenge.findById(challengeId);
+        const likeUsers = existChallenge.likeUsers;
         if (existLikes.includes(challengeId)) {
             existLikes.splice(existLikes.indexOf(challengeId), 1);
+            likeUsers.splice(likeUsers.indexOf(userId), 1);
             await User.updateOne({ _id: userId }, { $set: { likes: existLikes } });
+            await Challenge.updateOne({ _id: challengeId }, { $set: { likeUsers: likeUsers } });
             res.status(200).json({ message: '찜하기 취소 성공' });
         } else {
             res.status(400).json({ message: '찜하기 취소 실패' });

@@ -7,22 +7,46 @@ jest.mock('../models');
 const User = require('../models/user');
 const Challenge = require('../models/challenge');
 test('recommendChallenge에 정상적인 값 입력시 res.json()이 호출된다.', async () => {
-    Challenge.aggregate = jest.fn();
-    Challenge.aggregate.mockResolvedValue([{ _id: 1 }, { _id: 2 }]);
+    //Challenge.aggregate = jest.fn();
+    //Challenge.aggregate.mockResolvedValue([{ _id: 1 }, { _id: 2 }]);
+
+    const mockedFind = jest.fn();
+    mockedFind.mockResolvedValue([
+        { _id: 1, likeUsers: 10 },
+        { _id: 2, likeUsers: 3 },
+        { _id: 3, likeUsers: 5 },
+        { _id: 4, likeUsers: 1 },
+        { _id: 5, likeUsers: 2 },
+    ]);
+
     const mockedJson = jest.fn();
-    let res = await challengeCtl.recommendChallenge(
-        { query: { length: 1 } },
+    Challenge.find = () => {
+        return { lean: mockedFind };
+    };
+
+    jest.useFakeTimers('modern');
+    jest.setSystemTime(new Date(2022, 2, 10));
+    await challengeCtl.recommendChallenge(
+        { query: { length: 2 } },
         {
-            locals: { user: '' },
+            locals: { user: false },
             status: () => {
                 return { json: mockedJson };
             },
         }
     );
-    expect(Challenge.aggregate).toHaveBeenCalledTimes(1);
+    jest.useRealTimers();
+
+    expect(mockedFind).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledWith({
-        challenges: [{ _id: 1 }, { _id: 2 }],
+        challenges: [
+            { _id: 1, likeUsers: 10 },
+            { _id: 3, likeUsers: 5 },
+            // { _id: 2, likeUsers: 3 },
+            // { _id: 5, likeUsers: 2 },
+            // { _id: 4, likeUsers: 1 }
+        ],
     });
 });
 
@@ -231,11 +255,15 @@ test('joinCancelChallenge() 정상 작동 시', async () => {
 });
 
 test('likeChallenge() 정상 작동 시', async () => {
+    Challenge.findById = jest.fn();
+    Challenge.findById.mockResolvedValue({ likeUsers: [1, 2, 3, 4, 5] });
     const mockedJson = jest.fn();
     User.findById = jest.fn();
     User.findById.mockResolvedValue({
         likes: [6, 13, 14, 16, 17],
     });
+
+    Challenge.updateOne = jest.fn();
     User.updateOne = jest.fn();
     let res = await challengeCtl.likeChallenge(
         {
@@ -261,13 +289,29 @@ test('likeChallenge() 정상 작동 시', async () => {
             $set: { likes: [6, 13, 14, 16, 17, 3] },
         }
     );
+    expect(Challenge.updateOne).toHaveBeenCalledTimes(1);
+    expect(Challenge.updateOne).toHaveBeenCalledWith(
+        {
+            _id: 3,
+        },
+        {
+            $set: {
+                likeUsers: [1, 2, 3, 4, 5, 10],
+            },
+        }
+    );
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledWith({
         message: '찜하기 성공',
     });
 });
 
-test('likeChallenge() 정상 작동 시 ', async () => {
+test('likeCancelChallenge() 정상 작동 시 ', async () => {
+    Challenge.findById = jest.fn();
+    Challenge.findById.mockResolvedValue({ likeUsers: [1, 2, 3, 4, 5, 10] });
+
+    Challenge.updateOne = jest.fn();
+    User.updateOne = jest.fn();
     const mockedJson = jest.fn();
     User.findById = jest.fn();
     User.findById.mockResolvedValue({
@@ -296,6 +340,18 @@ test('likeChallenge() 정상 작동 시 ', async () => {
         },
         {
             $set: { likes: [6, 13, 14, 16, 17] },
+        }
+    );
+
+    expect(Challenge.updateOne).toHaveBeenCalledTimes(1);
+    expect(Challenge.updateOne).toHaveBeenCalledWith(
+        {
+            _id: 3,
+        },
+        {
+            $set: {
+                likeUsers: [1, 2, 3, 4, 5],
+            },
         }
     );
     expect(mockedJson).toHaveBeenCalledTimes(1);
