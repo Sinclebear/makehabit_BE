@@ -2,6 +2,11 @@ const moment = require('moment');
 const Proofshot = require('../models/proofShot');
 const User = require('../models/user');
 
+//두 수 min과 max사이의 난수 생성하기
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 module.exports = {
     //challegeId 추가하는 함수
     plusChallengeId: (challenges) => {
@@ -112,5 +117,23 @@ module.exports = {
                 i.isUpload = true;
             }
         }
+    },
+
+    calcProbability: () => {
+        //0 부터 100 사이의 난수 생성하기
+        let probability = getRandomArbitrary(0, 100);
+        let point;
+        if (probability < process.env.COMMON) {
+            point = 300;
+        } else if (probability < process.env.UNCOMMON) {
+            point = 500;
+        } else if (probability < process.env.RARE) {
+            point = 1000;
+        } else if (probability < process.env.EPIC) {
+            point = 2000;
+        } else {
+            point = 3000;
+        }
+        return point;
     },
 };

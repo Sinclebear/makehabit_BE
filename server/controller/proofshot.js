@@ -1,6 +1,7 @@
 const ProofShot = require('../models/proofShot');
 const Challenge = require('../models/challenge');
 const Character = require('../models/character');
+const calc = require('../modules/calcProperty');
 // 인증페이지 - 인증페이지 조회 (챌린지 상세페이지 조회와 동일. 필요한 요소만 뽑아서 보내도록 수정.)
 async function authProofshot(req, res) {
     try {
@@ -94,7 +95,7 @@ async function uploadProofshot(req, res) {
             let point;
             const userCharacter = await Character.findOne({ userId: user._id });
             if (totalCnt % 3 === 0) {
-                point = 300;
+                point = calc.calcProbability();
                 userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
                 await userCharacter.save();
             } else {
