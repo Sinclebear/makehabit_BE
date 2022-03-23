@@ -94,7 +94,7 @@ module.exports = {
         for (const i of challenges) {
             let pastDays = (new Date(today) - new Date(i.startAt)) / (1000 * 60 * 60 * 24);
             pastDays += 1;
-            i.pastDays = pastDays;
+            i.pastDays = Math.floor(pastDays); // 일 미만 단위의 시간 버림 처리
             i.round = Math.floor((pastDays - 1) / 3) + 1;
         }
     },
