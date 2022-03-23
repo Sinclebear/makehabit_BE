@@ -189,22 +189,24 @@ async function callUserRanking(req, res) {
     const { length } = req.query;
 
     let RankingList;
-    RankingList = await User.find({}, { _id: 1, nickname: 1 })
-        .sort({ proofCnt: 1 })
-        .limit(length)
+    RankingList = await User.find({}, { _id: 1, nickname: 1, proofCnt: 1 })
+        .sort({ proofCnt: -1 })
         .lean();
     RankingList = await Promise.all(
-        RankingList.map(async (x) => {
+        RankingList.map(async (x, i) => {
             let [character] = await Character.find({ userId: x._id });
-            x.isEquipped = character.equippedItems;
+            x.equippedItems = character.equippedItems;
+            x.rank = i + 1;
             return x;
         })
     );
 
     if (user === undefined) {
+        RankingList = RankingList.slice(0, length);
         res.status(200).json({ RankingList });
     } else {
         let me = RankingList.find((el) => el.nickname == user.nickname);
+        RankingList = RankingList.slice(0, length);
         res.status(200).json({ me, RankingList });
     }
 }
