@@ -40,8 +40,27 @@ module.exports = () => {
                         await Character.create({
                             userId: newUser._id,
                             characterCurrentPoint: 1000,
-                            equippedItems: [],
-                            haveItems: [],
+                            equippedItems: [
+                                '62345f283a3469d4462a5e7f',
+                                '62345f4c3a3469d4462a5e80',
+                                '62345f683a3469d4462a5e81',
+                                '62345f7b3a3469d4462a5e82',
+                                '62345f933a3469d4462a5e83',
+                            ],
+                            haveItems: [
+                                '62345f283a3469d4462a5e7f',
+                                '62345f4c3a3469d4462a5e80',
+                                '62345f683a3469d4462a5e81',
+                                '62345f7b3a3469d4462a5e82',
+                                '62345f933a3469d4462a5e83',
+                                '623460b43a3469d4462a5e87',
+                                '623460d03a3469d4462a5e88',
+                                '623460e03a3469d4462a5e89',
+                                '623460f43a3469d4462a5e8a',
+                                '6234610b3a3469d4462a5e8b',
+                                '6234611a3a3469d4462a5e8c',
+                                '6234710aeb5273d0e96b1802',
+                            ],
                         });
                         console.log('37줄', newUser);
                         done(null, newUser); // 회원가입하고 로그인 인증 완료
