@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema(
         provider: {
             type: String,
         },
+        proofCnt: {
+            type: Number,
+        },
     },
     { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
