@@ -7,6 +7,7 @@ jest.mock('../models');
 const Character = require('../models/character');
 const Challenge = require('../models/challenge');
 const proofShot = require('../models/proofShot');
+const User = require('../models/User');
 //인증 페이지 조회
 test('authProofshot() 정상 작동 시', async () => {
     const before = new Date('2022-03-05 00:00:00'); //UTC 03-04 15:00
@@ -100,7 +101,7 @@ test('uploadProofshot() 금일 이미 업로드한 proofShot이 있다면 업로
     });
 });
 
-test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수라면 300원을 받는다.', async () => {
+test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수라면 300원을 받고, User의 proofCnt를 1 증가시킨다.', async () => {
     const mockedJson = jest.fn();
     const mockedSave = jest.fn();
     Character.findOne = jest.fn().mockResolvedValue({
@@ -108,6 +109,7 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         save: mockedSave,
     });
 
+    User.updateOne = jest.fn();
     proofShot.find = jest.fn();
     proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
     proofShot.create = jest.fn();
@@ -132,7 +134,8 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
             locals: {
                 user: {
                     participate: [1, 2, 3, 4, 5],
-                    userId: 10,
+                    _id: 10,
+                    proofCnt: 1,
                 },
             },
             status: () => {
@@ -142,6 +145,8 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
     );
     jest.useRealTimers();
 
+    expect(User.updateOne).toHaveBeenCalledTimes(1);
+    expect(User.updateOne).toHaveBeenCalledWith({ _id: 10 }, { $set: { proofCnt: 2 } });
     expect(mockedSave).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledWith({
@@ -150,7 +155,7 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         totalCnt: 3,
     });
 });
-test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수가 아니라면 100원을 받는다.', async () => {
+test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수가 아니라면 100원을 받고 proofCnt를 1 늘린다.', async () => {
     const mockedJson = jest.fn();
     const mockedSave = jest.fn();
     Character.findOne = jest.fn().mockResolvedValue({
@@ -158,6 +163,7 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         save: mockedSave,
     });
 
+    User.updateOne = jest.fn();
     proofShot.find = jest.fn();
     proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
     proofShot.create = jest.fn();
@@ -182,7 +188,8 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
             locals: {
                 user: {
                     participate: [1, 2, 3, 4, 5],
-                    userId: 10,
+                    _id: 10,
+                    proofCnt: 5,
                 },
             },
             status: () => {
@@ -191,6 +198,9 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         }
     );
     jest.useRealTimers();
+
+    expect(User.updateOne).toHaveBeenCalledTimes(1);
+    expect(User.updateOne).toHaveBeenCalledWith({ _id: 10 }, { $set: { proofCnt: 6 } });
 
     expect(mockedSave).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
