@@ -2,7 +2,7 @@ jest.mock('../models');
 jest.mock('../middlewares/auth-middleware');
 jest.mock('../modules/calcProperty');
 const proofShotCtl = require('../controller/proofshot');
-
+const calc = require('../modules/calcProperty');
 jest.mock('../models');
 const Character = require('../models/character');
 const Challenge = require('../models/challenge');
@@ -100,14 +100,15 @@ test('uploadProofshot() 금일 이미 업로드한 proofShot이 있다면 업로
     });
 });
 
-test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수라면 300원을 받는다.', async () => {
+test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수라면 300원 이상을 받는다.', async () => {
     const mockedJson = jest.fn();
     const mockedSave = jest.fn();
     Character.findOne = jest.fn().mockResolvedValue({
         characterCurrentPoint: 1000,
         save: mockedSave,
     });
-
+    calc.calcProbability = jest.fn();
+    calc.calcProbability.mockReturnValue(500);
     proofShot.find = jest.fn();
     proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
     proofShot.create = jest.fn();
@@ -141,14 +142,9 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         }
     );
     jest.useRealTimers();
-
     expect(mockedSave).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
-    expect(mockedJson).toHaveBeenCalledWith({
-        point: 300,
-        message: '인증샷 등록이 완료되었습니다.',
-        totalCnt: 3,
-    });
+    expect(mockedJson.mock.calls[0][0].point).toBeGreaterThanOrEqual(300);
 });
 test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 3의 배수가 아니라면 100원을 받는다.', async () => {
     const mockedJson = jest.fn();
