@@ -2,6 +2,11 @@ const moment = require('moment');
 const Proofshot = require('../models/proofShot');
 const User = require('../models/user');
 
+//두 수 min과 max사이의 난수 생성하기
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 module.exports = {
     //challegeId 추가하는 함수
     plusChallengeId: (challenges) => {
@@ -89,7 +94,7 @@ module.exports = {
         for (const i of challenges) {
             let pastDays = (new Date(today) - new Date(i.startAt)) / (1000 * 60 * 60 * 24);
             pastDays += 1;
-            i.pastDays = pastDays;
+            i.pastDays = Math.floor(pastDays); // 일 미만 단위의 시간 버림 처리
             i.round = Math.floor((pastDays - 1) / 3) + 1;
         }
     },
@@ -112,5 +117,23 @@ module.exports = {
                 i.isUpload = true;
             }
         }
+    },
+
+    calcProbability: () => {
+        //0 부터 100 사이의 난수 생성하기
+        let probability = getRandomArbitrary(0, 100);
+        let point;
+        if (probability < process.env.COMMON) {
+            point = 300;
+        } else if (probability < process.env.UNCOMMON) {
+            point = 500;
+        } else if (probability < process.env.RARE) {
+            point = 1000;
+        } else if (probability < process.env.EPIC) {
+            point = 2000;
+        } else {
+            point = 3000;
+        }
+        return point;
     },
 };
