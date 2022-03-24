@@ -16,6 +16,9 @@ const options = {
             {
                 url: 'http://52.79.227.179:3000', // 요청 URL
             },
+            {
+                url: 'https://juhyeon.shop', // 요청 URL
+            },
         ],
         components: {
             securitySchemes: {
