@@ -114,6 +114,7 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
     proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
     proofShot.create = jest.fn();
     proofShot.count = jest.fn().mockResolvedValue(3);
+    User.updateOne = jest.fn();
     //인증샷 개수 (포인트 지급 위해서) => 3의 배수:300  ,else : 100
     //jest.spyOn(User.prototype, 'save').mockImplementationOnce(() => {});
     jest.useFakeTimers('modern');
@@ -144,6 +145,10 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         }
     );
     jest.useRealTimers();
+
+    expect(User.updateOne).toHaveBeenCalledTimes(1);
+    expect(User.updateOne).toHaveBeenCalledWith({ _id: 10 }, { $set: { proofCnt: 2 } });
+
     expect(mockedSave).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson.mock.calls[0][0].point).toBeGreaterThanOrEqual(300);
