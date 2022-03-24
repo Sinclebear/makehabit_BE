@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi');
 const bcrypt = require('bcrypt');
 const Character = require('../models/character');
-
 // 회원가입시 각 입력 항목 유효성 검사
 // 이메일, 닉네임 체크 api 에서도 사용하기 위해 각 validation(joi obj) 분리
 const email_validation = joi.object({
@@ -53,7 +52,7 @@ async function signup(req, res) {
             });
         }
 
-        const user = new User({ email, nickname, password });
+        const user = new User({ email, nickname, password, proofCnt: 0 });
         await user.save();
         await Character.create({
             userId: user._id,
@@ -185,10 +184,51 @@ async function checkLogin(req, res) {
     });
 }
 
+async function callUserRanking(req, res) {
+    const { user } = res.locals; // user object
+    const { length } = req.query;
+
+    let RankingList;
+    RankingList = await User.find({}, { _id: 1, nickname: 1, proofCnt: 1 })
+        .sort({ proofCnt: -1 })
+        .lean();
+
+    //유저 캐릭터 정보 끼워넣기
+    RankingList = await Promise.all(
+        RankingList.map(async (x) => {
+            let [character] = await Character.find({ userId: x._id });
+            x.equippedItems = character.equippedItems;
+            return x;
+        })
+    );
+
+    //랭킹 계산하기
+    let rank = 0;
+    let before = -1;
+    RankingList = RankingList.map((x) => {
+        if (x.proofCnt != before) {
+            rank++;
+            before = x.proofCnt;
+        }
+        x.rank = rank;
+        return x;
+    });
+
+    if (user === undefined) {
+        RankingList = RankingList.slice(0, length);
+        res.status(200).json({ RankingList });
+    } else {
+        let me = RankingList.find((el) => el.nickname == user.nickname);
+        RankingList = RankingList.slice(0, length);
+        res.status(200).json({ me, RankingList });
+    }
+}
+
 module.exports = {
     signup,
     login,
     checkEmail,
     checkNickname,
     checkLogin,
+    callUserRanking,
 };
