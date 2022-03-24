@@ -192,14 +192,27 @@ async function callUserRanking(req, res) {
     RankingList = await User.find({}, { _id: 1, nickname: 1, proofCnt: 1 })
         .sort({ proofCnt: -1 })
         .lean();
+
+    //유저 캐릭터 정보 끼워넣기
     RankingList = await Promise.all(
-        RankingList.map(async (x, i) => {
+        RankingList.map(async (x) => {
             let [character] = await Character.find({ userId: x._id });
             x.equippedItems = character.equippedItems;
-            x.rank = i + 1;
             return x;
         })
     );
+
+    //랭킹 계산하기
+    let rank = 0;
+    let before = -1;
+    RankingList = RankingList.map((x) => {
+        if (x.proofCnt != before) {
+            rank++;
+            before = x.proofCnt;
+        }
+        x.rank = rank;
+        return x;
+    });
 
     if (user === undefined) {
         RankingList = RankingList.slice(0, length);
