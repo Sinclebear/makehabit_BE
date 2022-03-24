@@ -7,7 +7,7 @@ jest.mock('../models');
 const Character = require('../models/character');
 const Challenge = require('../models/challenge');
 const proofShot = require('../models/proofShot');
-const User = require('../models/User');
+const User = require('../models/user');
 //인증 페이지 조회
 test('authProofshot() 정상 작동 시', async () => {
     const before = new Date('2022-03-05 00:00:00'); //UTC 03-04 15:00
