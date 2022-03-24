@@ -16,7 +16,7 @@ async function recommendChallenge(req, res) {
         let challenges;
         let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
         challenges = await Challenge.find({
-            startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+            startAt: { $gte: new Date(moment(today).add(-9, 'hours')) },
         }).lean();
 
         calc.calcUserLikes(challenges);
@@ -52,7 +52,7 @@ async function searchChallenge(req, res) {
         const existChallenges = await Challenge.find(
             {
                 title: { $regex: `${title}` },
-                startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+                startAt: { $gte: new Date(moment(today).add(-9, 'hours')) },
             },
             { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
         )
@@ -86,7 +86,7 @@ async function getCategoryList(req, res) {
         let today = new Date(moment().format('YYYY-MM-DD'));
         if (categoryId === 'all') {
             existChallenges = await Challenge.find(
-                { startAt: { $gt: new Date(moment(today).add(-9, 'hours')) } },
+                { startAt: { $gte: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             ) // projection으로 대체가능  질문..5개 가져오는 기준?!
                 .sort({ startAt: 1 })
@@ -96,7 +96,7 @@ async function getCategoryList(req, res) {
             existChallenges = await Challenge.find(
                 {
                     startAt: {
-                        $gt: new Date(moment(today).add(-9, 'hours')),
+                        $gte: new Date(moment(today).add(-9, 'hours')),
                         $lt: new Date(moment(today).add(7, 'days').add(15, 'hours')),
                     },
                 },
@@ -114,7 +114,7 @@ async function getCategoryList(req, res) {
                 .lean();
         } else if (categoryId === 'popular') {
             const notSortedExistChallenges = await Challenge.find(
-                { startAt: { $gt: new Date(moment(today).add(-9, 'hours')) } },
+                { startAt: { $gte: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             )
                 .sort({ startAt: 1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
@@ -127,7 +127,7 @@ async function getCategoryList(req, res) {
             existChallenges = await Challenge.find(
                 {
                     category: categoryId,
-                    startAt: { $gt: new Date(moment(today).add(-9, 'hours')) },
+                    startAt: { $gte: new Date(moment(today).add(-9, 'hours')) },
                 },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             ) // projection으로 대체가능  질문..5개 가져오는 기준?!
@@ -189,10 +189,19 @@ async function writeChallenge(req, res) {
         }
         const { userId } = res.locals.user;
         const { title, content, category, thumbnail, startAt, howtoContent } = req.body;
-        console.log(startAt, 'startAt'); // ISO TIME 2022-03-08 00:00:00
         let toIsoTime = new Date(moment(startAt));
-        console.log(toIsoTime, 'toIsoTime');
-        // moment를 넣은 순간 한국시간으로 바뀜 moment(startAt) === 한국시간 2022-03-08 00:00:00(ISOTIME+9시가)
+        let today = new Date().toDateString();
+        let checkpoint = new Date(today);
+        const existChallenges = await Challenge.find({
+            madeBy: userId,
+            createdAt: { $gte: checkpoint },
+        });
+        if (existChallenges.length >= 3) {
+            res.status(400).send({
+                errorMessage: '더 이상 챌린지를 개설할 수 없습니다.',
+            });
+            return;
+        }
         const participants = [userId];
         const existUser = await User.findById(userId);
         const participate = existUser.participate;
@@ -204,8 +213,8 @@ async function writeChallenge(req, res) {
             startAt: toIsoTime,
             howtoContent,
             participants,
+            madeBy: userId,
         });
-        console.log(createdChallenge);
         const challengeId = createdChallenge.challengeId;
         participate.push(challengeId);
         await User.updateOne({ _id: userId }, { $set: { participate } });

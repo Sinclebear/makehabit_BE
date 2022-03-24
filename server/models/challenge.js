@@ -35,6 +35,9 @@ const ChallengeSchema = new mongoose.Schema(
         likeUsers: {
             type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
         },
+        madeBy: {
+            type: mongoose.Schema.Types.ObjectId,
+        },
     },
 
     { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력
