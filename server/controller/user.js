@@ -196,7 +196,12 @@ async function callUserRanking(req, res) {
     //유저 캐릭터 정보 끼워넣기
     RankingList = await Promise.all(
         RankingList.map(async (x) => {
-            let [character] = await Character.find({ userId: x._id });
+            let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
+                .lean()
+                .populate({
+                    path: 'equippedItems',
+                    select: { _id: 0, category: 1, itemImgUrl: 1 },
+                });
             x.equippedItems = character.equippedItems;
             return x;
         })
