@@ -2,6 +2,7 @@ const Challenge = require('../models/challenge');
 const User = require('../models/user');
 const calc = require('../modules/calcProperty');
 const moment = require('moment');
+const sanitizeHtml = require('sanitize-html');
 // 추천 API
 async function recommendChallenge(req, res) {
     try {
@@ -206,12 +207,12 @@ async function writeChallenge(req, res) {
         const existUser = await User.findById(userId);
         const participate = existUser.participate;
         const createdChallenge = await Challenge.create({
-            title,
-            content,
+            title: sanitizeHtml(title),
+            content: sanitizeHtml(content),
             category,
             thumbnail,
             startAt: toIsoTime,
-            howtoContent,
+            howtoContent: sanitizeHtml(howtoContent),
             participants,
             madeBy: userId,
         });
