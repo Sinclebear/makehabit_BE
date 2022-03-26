@@ -193,6 +193,9 @@ async function callUserRanking(req, res) {
         .sort({ proofCnt: -1 })
         .lean();
 
+    // 캐릭터 옷 입는 순서를 맞출 기준이 되는 배열 item_order
+    let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
+
     //유저 캐릭터 정보 끼워넣기
     RankingList = await Promise.all(
         RankingList.map(async (x) => {
@@ -202,6 +205,10 @@ async function callUserRanking(req, res) {
                     path: 'equippedItems',
                     select: { _id: 0, category: 1, itemImgUrl: 1 },
                 });
+            //item_order 에 맞게 아이템 정렬
+            character.equippedItems.sort(
+                (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
+            );
             x.equippedItems = character.equippedItems;
             return x;
         })
