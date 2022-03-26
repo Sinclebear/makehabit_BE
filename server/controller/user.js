@@ -214,8 +214,6 @@ async function callUserRanking(req, res) {
         })
     );
 
-    console.log('랭킹 리스트', RankingList);
-
     //랭킹 계산하기
     let rank = 0;
     let before = -1;
