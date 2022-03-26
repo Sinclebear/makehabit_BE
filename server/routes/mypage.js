@@ -18,6 +18,9 @@ router.get('/proofShot/:proofShotId', authMiddleware, myPageCtl.getDetailProofSh
 //캐릭터 정보 조회 API
 router.get('/character', authMiddleware, myPageCtl.getCharacterInfo);
 
+//나의 총 인증횟수, 챌린지 참가 수 조회 API
+router.get('/userinfo', authMiddleware, myPageCtl.getUserInfo);
+
 /*
 // 아이템, 캐릭터 생성 테스트
 router.get('/createtest', authMiddleware, async (req, res) => {

@@ -187,10 +187,36 @@ async function getCharacterInfo(req, res) {
     }
 }
 
+//나의 총 인증횟수, 챌린지 참가 수 조회 API
+async function getUserInfo(req, res) {
+    let { user } = res.locals;
+    if (user === undefined) {
+        return res.status(401).json({ message: '로그인 후 사용하시오' });
+    }
+    try {
+        user = await User.findOne({ _id: user._id })
+            .select({
+                _id: 0,
+                userId: '$_id',
+                participate: 1,
+                proofCnt: 1,
+            })
+            .lean();
+        let participateCnt = user.participate.length;
+        user.participateCnt = participateCnt;
+        delete user.participate; // 불필요한 user 내 participate property 삭제
+        // console.log(user);
+        return res.status(200).json({ user });
+    } catch (err) {
+        return res.status(401).json({ message: '잘못된 요청입니다.' });
+    }
+}
+
 module.exports = {
     getMyChallenge,
     getMyLikeChallenge,
     getMyProofShot,
     getDetailProofShot,
     getCharacterInfo,
+    getUserInfo,
 };
