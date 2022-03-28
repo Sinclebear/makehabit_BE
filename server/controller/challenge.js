@@ -3,6 +3,7 @@ const User = require('../models/user');
 const calc = require('../modules/calcProperty');
 const moment = require('moment');
 const sanitizeHtml = require('sanitize-html');
+const Character = require('../models/character');
 // 추천 API
 async function recommendChallenge(req, res) {
     try {
@@ -163,7 +164,7 @@ async function getDetailChallenge(req, res) {
         calc.calcParticipants([challenge]);
         calc.plusChallengeId([challenge]);
         calc.calcPastDaysAndRound([challenge]);
-        calc.calcStatus([challenge]);
+        calc.calcUploadStatus([challenge]);
         if (!userId) {
             challenge.proofCount = 0;
             challenge.isUpload = false;
@@ -219,7 +220,11 @@ async function writeChallenge(req, res) {
         const challengeId = createdChallenge.challengeId;
         participate.push(challengeId);
         await User.updateOne({ _id: userId }, { $set: { participate } });
-        res.status(201).json({ message: '챌린지 작성이 완료되었습니다.', challengeId }); // created : 201
+        const userCharacter = await Character.findOne({ userId: userId });
+        let point = 100;
+        userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
+        await userCharacter.save();
+        res.status(201).json({ message: '챌린지 작성이 완료되었습니다.', challengeId, point }); // created : 201
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err.message });

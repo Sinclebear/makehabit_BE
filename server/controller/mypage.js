@@ -30,7 +30,7 @@ async function getMyChallenge(req, res) {
 
         let challenges = user.participate;
         calc.calcParticipants(challenges);
-        await calc.calcUserIsUpload(challenges, user.userId);
+        await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
         for (const i of challenges) i.challengeId = i._id;
