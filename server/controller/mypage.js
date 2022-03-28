@@ -32,7 +32,7 @@ async function getMyChallenge(req, res) {
         calc.calcParticipants(challenges);
         await calc.calcUserIsUpload(challenges, user.userId);
         calc.calcPastDaysAndRound(challenges);
-        calc.calcStatus(challenges);
+        calc.calcUploadStatus(challenges);
         for (const i of challenges) i.challengeId = i._id;
         //status가 undefined 인 경우
         challenges.sort((a, b) => {

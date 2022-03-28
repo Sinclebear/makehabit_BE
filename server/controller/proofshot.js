@@ -61,6 +61,11 @@ async function uploadProofshot(req, res) {
             return res.status(401).json({ message: '참여 중인 첼린지만 인증이 가능합니다.' });
         }
 
+        const existChallenge = await Challenge.findById(challengeId).lean();
+        calc.calcUploadStatus([existChallenge]);
+        if (existChallenge.status !== 0) {
+            return res.status(401).json({ message: '진행 중인 챌린지만 인증이 가능합니다.' });
+        }
         let today = new Date();
         let today_date = new Date(
             today.getFullYear(),

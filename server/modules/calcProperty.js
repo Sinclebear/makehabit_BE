@@ -55,7 +55,22 @@ module.exports = {
             const start = i.startAt;
             const cur = new Date().toLocaleDateString();
             const end = new Date(cur); //    3/8:15:00
+            const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
+            if (dateDiff <= 0) {
+                i.status = 1; //시작 전
+            } else if (dateDiff > 30) {
+                i.status = 2; //완료
+            } else {
+                i.status = 0; //진행중
+            }
+        }
+    },
 
+    calcUploadStatus: (challenges) => {
+        for (const i of challenges) {
+            const start = i.startAt;
+            const cur = new Date().toLocaleDateString();
+            const end = new Date(cur); //    3/8:15:00
             const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
             if (dateDiff < 0) {
                 i.status = 1; //시작 전
