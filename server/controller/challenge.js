@@ -164,7 +164,7 @@ async function getDetailChallenge(req, res) {
         calc.calcParticipants([challenge]);
         calc.plusChallengeId([challenge]);
         calc.calcPastDaysAndRound([challenge]);
-        calc.calcStatus([challenge]);
+        calc.calcUploadStatus([challenge]);
         if (!userId) {
             challenge.proofCount = 0;
             challenge.isUpload = false;
