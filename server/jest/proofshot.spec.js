@@ -59,6 +59,11 @@ test('uploadProofshot() 금일 이미 업로드한 proofShot이 있다면 업로
         characterCurrentPoint: 1000,
         save: mockedSave,
     });
+    Challenge.findById.mockImplementationOnce(() => ({
+        lean: jest.fn().mockReturnValue({
+            status: 0,
+        }),
+    }));
 
     proofShot.find = jest.fn();
     proofShot.find.mockResolvedValue([1]); //오늘 이미 업로드한 인증샷이 있다.
@@ -108,6 +113,11 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         characterCurrentPoint: 1000,
         save: mockedSave,
     });
+    Challenge.findById.mockImplementationOnce(() => ({
+        lean: jest.fn().mockReturnValue({
+            status: 0,
+        }),
+    }));
     calc.calcProbability = jest.fn();
     calc.calcProbability.mockReturnValue(500);
     proofShot.find = jest.fn();
@@ -160,6 +170,11 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
         characterCurrentPoint: 1000,
         save: mockedSave,
     });
+    Challenge.findById.mockImplementationOnce(() => ({
+        lean: jest.fn().mockReturnValue({
+            status: 0,
+        }),
+    }));
 
     User.updateOne = jest.fn();
     proofShot.find = jest.fn();
