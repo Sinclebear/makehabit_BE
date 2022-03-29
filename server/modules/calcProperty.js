@@ -143,9 +143,9 @@ module.exports = {
         } else if (probability < process.env.UNCOMMON) {
             point = 500;
         } else if (probability < process.env.RARE) {
-            point = 1000;
+            point = 700;
         } else if (probability < process.env.EPIC) {
-            point = 2000;
+            point = 1000;
         } else {
             point = 3000;
         }
