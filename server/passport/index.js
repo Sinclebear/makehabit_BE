@@ -35,6 +35,7 @@ module.exports = () => {
                             nickname: profile.username,
                             email: profile.id,
                             provider: 'kakao',
+                            proofCnt: 0,
                         });
                         await Character.create({
                             userId: newUser._id,
