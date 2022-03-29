@@ -33,7 +33,10 @@ async function getMyChallenge(req, res) {
         await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
-        for (const i of challenges) i.challengeId = i._id;
+        for (const i of challenges) {
+            i.challengeId = i._id;
+            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        }
         //status가 undefined 인 경우
         challenges.sort((a, b) => {
             if (b.status === a.status) {
@@ -86,7 +89,10 @@ async function getMyLikeChallenge(req, res) {
         // await calc.calcUserIsUpload(challenges, user.userId);
         // calc.calcPastDaysAndRound(challenges);
         await calc.calcIsLike(challenges, user._id); // 좋아요 필드 추가
-        for (const i of challenges) i.challengeId = i._id;
+        for (const i of challenges) {
+            i.challengeId = i._id;
+            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        }
 
         //status가 undefined 인 경우
         if (!status) return res.status(200).json({ challenges });
@@ -115,7 +121,10 @@ async function getMyProofShot(req, res) {
                 createdAt: 1,
             })
             .lean();
-        for (const i of proofShots) i.proofShotId = i._id;
+        for (const i of proofShots) {
+            i.proofShotId = i._id;
+            i.imgUrl = i.imgUrl.replace('origin', 'thumb');
+        }
         console.log(proofShots);
         return res.status(200).json({ proofShots });
     } catch (err) {
