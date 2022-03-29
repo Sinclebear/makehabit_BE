@@ -204,9 +204,16 @@ async function writeChallenge(req, res) {
         }
         const { userId } = res.locals.user;
         const { title, content, category, thumbnail, startAt, howtoContent } = req.body;
+
         let toIsoTime = new Date(moment(startAt));
         let today = new Date().toDateString();
         let checkpoint = new Date(today);
+        if (toIsoTime - checkpoint < 0) {
+            res.status(400).send({
+                message: '오늘 날짜 이전의 챌린지는 개설할 수 없습니다.',
+            });
+            return;
+        }
         const existChallenges = await Challenge.find({
             madeBy: userId,
             createdAt: { $gte: checkpoint },
