@@ -31,6 +31,11 @@ async function recommendChallenge(req, res) {
         calc.calcPastDaysAndRound(challenges);
         calc.calcStatus(challenges);
         await calc.calcIsLike(challenges, userId);
+
+        for (const i of challenges) {
+            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        }
+
         res.status(200).json({ challenges });
     } catch (err) {
         console.log(err);
@@ -66,6 +71,10 @@ async function searchChallenge(req, res) {
         calc.calcStatus(existChallenges);
         await calc.calcIsLike(existChallenges, userId);
         const challenges = existChallenges; //날짜 내림차순 으로 정리
+
+        for (const i of challenges) {
+            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        }
         res.status(200).json({ challenges });
     } catch (err) {
         console.log(err);
@@ -142,6 +151,10 @@ async function getCategoryList(req, res) {
         calc.calcPastDaysAndRound(existChallenges);
         await calc.calcIsLike(existChallenges, userId);
         const challenges = existChallenges;
+
+        for (const i of challenges) {
+            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        }
         res.status(200).json({ challenges });
     } catch (err) {
         console.log(err);
