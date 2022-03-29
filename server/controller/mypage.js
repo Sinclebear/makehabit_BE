@@ -121,11 +121,12 @@ async function getMyProofShot(req, res) {
                 createdAt: 1,
             })
             .lean();
-        console.log(proofShots);
+
         for (let i = 0; i < proofShots.length; i++) {
             proofShots[i].proofShotId = proofShots[i]._id;
-            if (i != proofShots.length - 1)
+            if (i != proofShots.length - 1) {
                 proofShots[i].imgUrl = proofShots[i].imgUrl.replace('origin', 'thumb');
+            }
         }
 
         console.log(proofShots);
