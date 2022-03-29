@@ -12,11 +12,11 @@ test('recommendChallenge에 정상적인 값 입력시 res.json()이 호출된�
 
     const mockedFind = jest.fn();
     mockedFind.mockResolvedValue([
-        { _id: 1, likeUsers: 10 },
-        { _id: 2, likeUsers: 3 },
-        { _id: 3, likeUsers: 5 },
-        { _id: 4, likeUsers: 1 },
-        { _id: 5, likeUsers: 2 },
+        { _id: 1, likeUsers: 10, thumbnail: '' },
+        { _id: 2, likeUsers: 3, thumbnail: '' },
+        { _id: 3, likeUsers: 5, thumbnail: '' },
+        { _id: 4, likeUsers: 1, thumbnail: '' },
+        { _id: 5, likeUsers: 2, thumbnail: '' },
     ]);
 
     const mockedJson = jest.fn();
@@ -41,8 +41,8 @@ test('recommendChallenge에 정상적인 값 입력시 res.json()이 호출된�
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledWith({
         challenges: [
-            { _id: 1, likeUsers: 10 },
-            { _id: 3, likeUsers: 5 },
+            { _id: 1, likeUsers: 10, thumbnail: '' },
+            { _id: 3, likeUsers: 5, thumbnail: '' },
             // { _id: 2, likeUsers: 3 },
             // { _id: 5, likeUsers: 2 },
             // { _id: 4, likeUsers: 1 }
@@ -57,10 +57,12 @@ test('searchChallenge() 에 정상적인 값 입력시 res.json 이 호출된다
         {
             _id: 1,
             startAt: new Date('2022-03-15'),
+            thumbnail: '',
         },
         {
             _id: 1,
             startAt: new Date('2022-03-10'),
+            thumbnail: '',
         },
     ]);
     Challenge.find = jest.fn(() => ({ sort: () => ({ lean: mockedLean }) }));
@@ -87,10 +89,12 @@ test('searchChallenge() 에 정상적인 값 입력시 res.json 이 호출된다
             {
                 _id: 1,
                 startAt: new Date('2022-03-15'),
+                thumbnail: '',
             },
             {
                 _id: 1,
                 startAt: new Date('2022-03-10'),
+                thumbnail: '',
             },
         ],
     });
@@ -99,7 +103,10 @@ test('searchChallenge() 에 정상적인 값 입력시 res.json 이 호출된다
 test('getCategoryList()에 정상적인 값 입력시 lean과 res.json 이 한번씩 호출된다.', async () => {
     const mockedLean = jest.fn();
     const mockedJson = jest.fn();
-    mockedLean.mockResolvedValue([{ _id: 1 }, { _id: 2 }]);
+    mockedLean.mockResolvedValue([
+        { _id: 1, thumbnail: '' },
+        { _id: 2, thumbnail: '' },
+    ]);
 
     Challenge.find = jest.fn(() => ({
         sort: () => ({
@@ -131,7 +138,10 @@ test('getCategoryList()에 정상적인 값 입력시 lean과 res.json 이 한�
     expect(mockedLean).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledTimes(1);
     expect(mockedJson).toHaveBeenCalledWith({
-        challenges: [{ _id: 1 }, { _id: 2 }],
+        challenges: [
+            { _id: 1, thumbnail: '' },
+            { _id: 2, thumbnail: '' },
+        ],
     });
 });
 
