@@ -184,12 +184,13 @@ async function checkLogin(req, res) {
     });
 }
 
+// 유저 랭킹 정보 불러오기
 async function callUserRanking(req, res) {
     const { user } = res.locals; // user object
     const { length } = req.query;
 
     let RankingList;
-    RankingList = await User.find({}, { _id: 1, nickname: 1, proofCnt: 1 })
+    RankingList = await User.find({}, { _id: 1, email: 1, nickname: 1, proofCnt: 1 })
         .sort({ proofCnt: -1 })
         .lean();
 
@@ -230,7 +231,7 @@ async function callUserRanking(req, res) {
         RankingList = RankingList.slice(0, length);
         res.status(200).json({ RankingList });
     } else {
-        let me = RankingList.find((el) => el.nickname == user.nickname);
+        let me = RankingList.find((el) => el.email == user.email);
         RankingList = RankingList.slice(0, length);
         res.status(200).json({ me, RankingList });
     }
