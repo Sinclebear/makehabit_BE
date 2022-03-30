@@ -33,9 +33,10 @@ async function getMyChallenge(req, res) {
         await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
-        for (const i of challenges) {
-            i.challengeId = i._id;
-            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        for (let i = 0; i < challenges.length; i++) {
+            challenges[i].challengeId = challenges[i]._id;
+            if (i != challenges.length - 1)
+                challenges[i].thumbnail = challenges[i].thumbnail.replace('origin', 'thumb');
         }
         //status가 undefined 인 경우
         challenges.sort((a, b) => {
