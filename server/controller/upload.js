@@ -5,9 +5,9 @@ const router = express.Router();
 async function imageUpload(req, res) {
     try {
         const file = await req.file;
-        console.log(file);
+        //console.log(file);
         const result = await file.location;
-        console.log(result);
+        //console.log(result);
         //사진 경로가 있는 주소를  imgurl이라는 이름으로 저장
         res.status(200).json({ imgUrl: result });
     } catch (e) {
