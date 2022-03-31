@@ -25,6 +25,7 @@ async function getMyChallenge(req, res) {
                     participants: 1,
                     thumbnail: 1,
                     startAt: 1,
+                    madeBy: 1,
                 },
             });
 
@@ -33,6 +34,7 @@ async function getMyChallenge(req, res) {
         await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
+        calc.calcIsHost(challenges, user._id);
         for (let i = 0; i < challenges.length; i++) {
             challenges[i].challengeId = challenges[i]._id;
             if (i != challenges.length - 1)

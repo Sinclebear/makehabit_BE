@@ -78,6 +78,15 @@ module.exports = {
             }
         }
     },
+    calcIsHost: (challenges, userId) => {
+        for (const i of challenges) {
+            if (i.madeBy.toString() !== userId.toString()) {
+                i.isHost = false;
+            } else {
+                i.isHost = true;
+            }
+        }
+    },
 
     calcUploadStatus: (challenges) => {
         for (const i of challenges) {
