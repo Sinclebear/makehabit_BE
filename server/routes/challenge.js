@@ -19,6 +19,9 @@ router.get('/challenges/:challengeId', authMiddleware, challengeCtl.getDetailCha
 //챌린지 작성 API 기능 구현 완료
 router.post('/challenges', authMiddleware, challengeCtl.writeChallenge);
 
+//챌린지 수정 API
+router.put('/challenges/:challengeId', authMiddleware, challengeCtl.changeChallenge);
+
 // 챌린지 참여하기 기능 구현 완료
 router.post('/challenges/:challengeId/join', authMiddleware, challengeCtl.joinChallenge);
 

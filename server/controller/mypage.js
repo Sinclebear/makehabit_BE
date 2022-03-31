@@ -13,7 +13,6 @@ async function getMyChallenge(req, res) {
     }
 
     try {
-        console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
             .populate({
@@ -25,6 +24,7 @@ async function getMyChallenge(req, res) {
                     participants: 1,
                     thumbnail: 1,
                     startAt: 1,
+                    madeBy: 1,
                 },
             });
 
@@ -33,6 +33,7 @@ async function getMyChallenge(req, res) {
         await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
+        calc.calcIsHost(challenges, user._id);
         for (let i = 0; i < challenges.length; i++) {
             challenges[i].challengeId = challenges[i]._id;
             if (i != challenges.length - 1)
@@ -45,7 +46,6 @@ async function getMyChallenge(req, res) {
             }
             return a.status - b.status;
         });
-        console.log(challenges);
         if (!status) return res.status(200).json({ challenges });
         else
             return res

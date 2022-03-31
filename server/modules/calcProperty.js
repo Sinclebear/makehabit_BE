@@ -65,6 +65,30 @@ module.exports = {
             }
         }
     },
+    // 수정 가능한지 조사
+    calcChangeable: (challenges, userId) => {
+        for (const i of challenges) {
+            let startAt = i.startAt;
+            let today = new Date().toDateString();
+            let checkpoint = new Date(today);
+            if (i.madeBy.toString() !== userId || startAt - checkpoint <= 0) {
+                i.isChangeable = false;
+            } else {
+                i.isChangeable = true;
+            }
+        }
+    },
+
+    //내가 쓴 글인지 조사하는 함수
+    calcIsHost: (challenges, userId) => {
+        for (const i of challenges) {
+            if (i.madeBy.toString() !== userId.toString()) {
+                i.isHost = false;
+            } else {
+                i.isHost = true;
+            }
+        }
+    },
 
     calcUploadStatus: (challenges) => {
         for (const i of challenges) {

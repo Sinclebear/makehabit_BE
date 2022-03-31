@@ -178,11 +178,11 @@ async function getDetailChallenge(req, res) {
         calc.plusChallengeId([challenge]);
         calc.calcPastDaysAndRound([challenge]);
         calc.calcUploadStatus([challenge]);
+        calc.calcChangeable([challenge], userId);
         if (!userId) {
             challenge.proofCount = 0;
             challenge.isUpload = false;
         } else {
-            console.log(userId);
             await calc.calcProofCnt([challenge], userId);
             await calc.calcUserIsUpload([challenge], userId);
         }
@@ -197,8 +197,8 @@ async function getDetailChallenge(req, res) {
 async function writeChallenge(req, res) {
     try {
         if (!res.locals.user) {
-            res.status(401).send({
-                errorMessage: '로그인 후 사용하시오',
+            res.status(401).json({
+                message: '로그인 후 사용하시오',
             });
             return;
         }
@@ -245,6 +245,62 @@ async function writeChallenge(req, res) {
         userCharacter.characterCurrentPoint = userCharacter.characterCurrentPoint + point;
         await userCharacter.save();
         res.status(201).json({ message: '챌린지 작성이 완료되었습니다.', challengeId, point }); // created : 201
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ message: err.message });
+    }
+}
+
+// 챌린지 수정 API
+async function changeChallenge(req, res) {
+    if (!res.locals.user) {
+        res.status(401).json({
+            message: '로그인 후 사용하시오',
+        });
+        return;
+    }
+    try {
+        const { title, content, category, thumbnail, startAt, howtoContent } = req.body;
+        let toIsoTime = new Date(moment(startAt));
+        let today = new Date().toDateString();
+        let checkpoint = new Date(today);
+        if (toIsoTime - checkpoint <= 0) {
+            res.status(400).json({
+                message: '오늘 이후의 날짜로만 수정가능합니다.',
+            });
+            return;
+        }
+        const { userId } = res.locals.user;
+        const { challengeId } = req.params;
+        const challenge = await Challenge.findById(challengeId).lean();
+        if (challenge) {
+            calc.calcChangeable([challenge], userId);
+            if (!challenge.isChangeable) {
+                res.status(401).json({
+                    message: '수정 불가능 합니다.',
+                });
+                return;
+            }
+            await Challenge.updateOne(
+                { _id: challengeId },
+                {
+                    $set: {
+                        title: sanitizeHtml(title),
+                        content: sanitizeHtml(content),
+                        category,
+                        thumbnail,
+                        howtoContent: sanitizeHtml(howtoContent),
+                        startAt: toIsoTime,
+                    },
+                }
+            );
+        } else {
+            res.status(401).json({
+                message: '수정 불가능 합니다.',
+            });
+            return;
+        }
+        res.json({ message: '챌린지 수정완료', challengeId });
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err.message });
@@ -400,6 +456,7 @@ module.exports = {
     getDetailChallenge,
     joinChallenge,
     writeChallenge,
+    changeChallenge,
     joinCancelChallenge,
     likeChallenge,
     likeCancelChallenge,
