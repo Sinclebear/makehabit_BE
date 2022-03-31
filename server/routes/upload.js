@@ -5,7 +5,7 @@ const uploadCtl = require('../controller/upload');
 
 //api
 //image upload to s3 사진 1개씩 저장, upload.single or
-router.post('/image', upload.single('image'), uploadCtl.imageUpload);
+router.post('/image', upload, uploadCtl.imageUpload);
 
 // // 이미지 저장 여러 개
 // router.post('/image', upload.array('image', 5), async (req, res) => {
