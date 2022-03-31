@@ -33,9 +33,10 @@ async function getMyChallenge(req, res) {
         await calc.calcUserIsUpload(challenges, user._id);
         calc.calcPastDaysAndRound(challenges);
         calc.calcUploadStatus(challenges);
-        for (const i of challenges) {
-            i.challengeId = i._id;
-            i.thumbnail = i.thumbnail.replace('origin', 'thumb');
+        for (let i = 0; i < challenges.length; i++) {
+            challenges[i].challengeId = challenges[i]._id;
+            if (i != challenges.length - 1)
+                challenges[i].thumbnail = challenges[i].thumbnail.replace('origin', 'thumb');
         }
         //status가 undefined 인 경우
         challenges.sort((a, b) => {
@@ -121,10 +122,14 @@ async function getMyProofShot(req, res) {
                 createdAt: 1,
             })
             .lean();
-        for (const i of proofShots) {
-            i.proofShotId = i._id;
-            i.imgUrl = i.imgUrl.replace('origin', 'thumb');
+
+        for (let i = 0; i < proofShots.length; i++) {
+            proofShots[i].proofShotId = proofShots[i]._id;
+            if (i != proofShots.length - 1) {
+                proofShots[i].imgUrl = proofShots[i].imgUrl.replace('origin', 'thumb');
+            }
         }
+
         console.log(proofShots);
         return res.status(200).json({ proofShots });
     } catch (err) {
