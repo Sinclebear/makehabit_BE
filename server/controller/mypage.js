@@ -13,7 +13,6 @@ async function getMyChallenge(req, res) {
     }
 
     try {
-        console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
             .populate({
@@ -47,7 +46,6 @@ async function getMyChallenge(req, res) {
             }
             return a.status - b.status;
         });
-        console.log(challenges);
         if (!status) return res.status(200).json({ challenges });
         else
             return res

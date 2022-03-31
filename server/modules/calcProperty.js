@@ -78,6 +78,8 @@ module.exports = {
             }
         }
     },
+
+    //내가 쓴 글인지 조사하는 함수
     calcIsHost: (challenges, userId) => {
         for (const i of challenges) {
             if (i.madeBy.toString() !== userId.toString()) {
