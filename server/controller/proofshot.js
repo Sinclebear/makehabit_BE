@@ -41,7 +41,7 @@ async function authProofshot(req, res) {
     }
 }
 
-// 인증페이지 - 인증 완료 (업로드). 작성 필요
+// 인증페이지 - 인증 완료 (업로드)
 async function uploadProofshot(req, res) {
     try {
         let { user } = res.locals;
@@ -52,10 +52,6 @@ async function uploadProofshot(req, res) {
         if (user === undefined) {
             return res.status(401).json({ message: '로그인 후 사용 가능합니다.' });
         }
-        // proofshot 테이블을 userId로 먼저 조회해서,
-        // "오늘 날짜로" 올린 게시글이 있는경우, 400에러.
-        // 근데 오늘 날짜, 오늘 챌린지Id로 올린 사용자가, 애초에 여기로 접근이 아예 안되야되지 않나.
-        // 한번 더 걸러줘야되나?
         const { challengeId } = req.params;
         if (!user.participate.includes(challengeId)) {
             return res.status(401).json({ message: '참여 중인 첼린지만 인증이 가능합니다.' });
@@ -123,7 +119,45 @@ async function uploadProofshot(req, res) {
     }
 }
 
+// 인증페이지 - 인증 페이지 수정
+async function modifyProofshot(req, res) {
+    try {
+        console.log('예');
+        let { user } = res.locals;
+
+        // 비로그인 사용자 처리
+        if (user === undefined) {
+            return res.status(401).json({ message: '로그인 후 사용 가능합니다.' });
+        }
+
+        const { proofshotId } = req.params;
+        const { comment } = req.body;
+
+        const proofshotData = await ProofShot.findOne({
+            _id: proofshotId,
+        }).lean();
+        if (proofshotData === null) {
+            return res.status(400).json({ message: '인증샷이 없어요...' });
+        }
+
+        if (proofshotData.userId.toString() !== user.userId) {
+            return res.status(400).json({ message: '본인의 인증샷만 수정 가능합니다.' });
+        } else {
+            const proofshotResult = await ProofShot.findByIdAndUpdate(
+                { _id: proofshotId },
+                { $set: { comment } },
+                { new: true }
+            ).exec();
+            return res.status(201).json({ message: '인증샷 내용이 수정되었습니다.' });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({ message: err.message });
+    }
+}
+
 module.exports = {
     authProofshot,
     uploadProofshot,
+    modifyProofshot,
 };
