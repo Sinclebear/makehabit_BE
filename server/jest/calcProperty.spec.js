@@ -86,7 +86,7 @@ test('경과 날짜, round 계산', async () => {
     expect(challenges).toEqual([
         { startAt: new Date('2022-03-06T15:00:00Z'), pastDays: 5, round: 2 },
         { startAt: new Date('2022-03-15T15:00:00Z'), pastDays: -4, round: -1 },
-        { startAt: new Date('2022-02-08T15:00:00Z'), pastDays: 31, round: 11 },
+        { startAt: new Date('2022-02-08T15:00:00Z'), pastDays: 31, round: 10 },
     ]);
 });
 

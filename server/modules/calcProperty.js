@@ -98,7 +98,7 @@ module.exports = {
             const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
             if (dateDiff < 0) {
                 i.status = 1; //시작 전
-            } else if (dateDiff > 30) {
+            } else if (dateDiff >= 30) {
                 i.status = 2; //완료
             } else {
                 i.status = 0; //진행중
@@ -135,6 +135,7 @@ module.exports = {
             pastDays += 1;
             i.pastDays = Math.floor(pastDays); // 일 미만 단위의 시간 버림 처리
             i.round = Math.floor((pastDays - 1) / 3) + 1;
+            if (i.round > 10) i.round = 10;
         }
     },
 
