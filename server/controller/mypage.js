@@ -130,7 +130,7 @@ async function getMyProofShot(req, res) {
             }
         }
 
-        console.log(proofShots);
+        // console.log(proofShots);
         return res.status(200).json({ proofShots });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });
@@ -150,7 +150,7 @@ async function getDetailProofShot(req, res) {
             _id: proofShotId,
             //userId: user.userId,
         }).lean();
-        console.log(proofShot);
+        // console.log(proofShot);
         proofShot.proofShotId = proofShot._id;
         return res.status(200).json({ proofShot });
     } catch (err) {
