@@ -122,7 +122,7 @@ async function uploadProofshot(req, res) {
 // 인증페이지 - 인증 페이지 수정
 async function modifyProofshot(req, res) {
     try {
-        console.log('예');
+        // console.log('예');
         let { user } = res.locals;
 
         // 비로그인 사용자 처리
