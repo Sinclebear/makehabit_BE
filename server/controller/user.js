@@ -199,7 +199,7 @@ async function callUserRanking(req, res) {
 
     //유저 캐릭터 정보 끼워넣기
     RankingList = await Promise.all(
-        RankingList.map(async (x) => {
+        RankingList.map(async (x, i) => {
             let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
                 .lean()
                 .populate({
@@ -211,25 +211,54 @@ async function callUserRanking(req, res) {
                 (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
             );
             x.equippedItems = character.equippedItems;
+            x.rank = i + 1;
             return x;
         })
     );
 
     //랭킹 계산하기
-    let rank = 0;
-    let before = -1;
+    let before_rank = 0;
+    let before_proofCnt = -1;
     RankingList = RankingList.map((x) => {
-        if (x.proofCnt != before) {
-            rank++;
-            before = x.proofCnt;
+        if (x.proofCnt === before_proofCnt) {
+            x.rank = before_rank;
+        } else {
+            before_proofCnt = x.proofCnt;
+            before_rank = x.rank;
         }
-        x.rank = rank;
         return x;
     });
 
     if (user === undefined) {
+        let me = {
+            nickname: 'Guest',
+            proofCnt: '-',
+            equippedItems: [
+                {
+                    category: 'background',
+                    itemImgUrl: '/background_00.webp',
+                },
+                {
+                    category: 'color',
+                    itemImgUrl: '/color_00.webp',
+                },
+                {
+                    category: 'clothes',
+                    itemImgUrl: '/clothes_00.webp',
+                },
+                {
+                    category: 'acc',
+                    itemImgUrl: '/acc_00.webp',
+                },
+                {
+                    category: 'emotion',
+                    itemImgUrl: '/emotion_00.webp',
+                },
+            ],
+            rank: '-',
+        };
         RankingList = RankingList.slice(0, length);
-        res.status(200).json({ RankingList });
+        res.status(200).json({ me, RankingList });
     } else {
         let me = RankingList.find((el) => el.email == user.email);
         RankingList = RankingList.slice(0, length);
