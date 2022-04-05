@@ -218,7 +218,7 @@ async function callUserRanking(req, res) {
             character.equippedItems.sort(
                 (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
             );
-            x.equippedItems = character.equippedItems;
+            x.equippedItems = equippedItems;
             x.rank = i + 1;
             return x;
         })
