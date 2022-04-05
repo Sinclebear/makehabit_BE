@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi');
 const bcrypt = require('bcrypt');
 const Character = require('../models/character');
+const Item = require('../models/item');
 // 회원가입시 각 입력 항목 유효성 검사
 // 이메일, 닉네임 체크 api 에서도 사용하기 위해 각 validation(joi obj) 분리
 const email_validation = joi.object({
@@ -188,7 +189,6 @@ async function checkLogin(req, res) {
 async function callUserRanking(req, res) {
     const { user } = res.locals; // user object
     const { length } = req.query;
-
     let RankingList;
     RankingList = await User.find({}, { _id: 1, email: 1, nickname: 1, proofCnt: 1 })
         .sort({ proofCnt: -1 })
@@ -198,14 +198,22 @@ async function callUserRanking(req, res) {
     let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
 
     //유저 캐릭터 정보 끼워넣기
-    RankingList = await Promise.all(
+
+    let items_find = await Item.find({});
+    let items = {};
+    for (const i of items_find) {
+        items[i._id] = {
+            category: i.category,
+            itemImgUrl: i.itemImgUrl,
+        };
+    }
+
+    await Promise.all(
         RankingList.map(async (x, i) => {
-            let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
-                .lean()
-                .populate({
-                    path: 'equippedItems',
-                    select: { _id: 0, category: 1, itemImgUrl: 1 },
-                });
+            let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 }).lean();
+            let equippedItems = [];
+            for (const j of character.equippedItems) equippedItems.push(items[j]);
+
             //item_order 에 맞게 아이템 정렬
             character.equippedItems.sort(
                 (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
@@ -215,6 +223,38 @@ async function callUserRanking(req, res) {
             return x;
         })
     );
+
+    // for (const i of RankingList) {
+    //     let [character] = await Character.find({ userId: i._id }, { equippedItems: 1 });
+
+    //     let equippedItems = [];
+    //     for (const j of character.equippedItems) equippedItems.push(items[j]);
+
+    //     equippedItems.sort(
+    //         (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
+    //     );
+    //     i.equippedItems = equippedItems;
+    //     i.rank = r++;
+    // }
+    // console.timeEnd('b');
+
+    // RankingList = await Promise.all(
+    //     RankingList.map(async (x, i) => {
+    //         let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
+    //             .lean()
+    //             .populate({
+    //                 path: 'equippedItems',
+    //                 select: { _id: 0, category: 1, itemImgUrl: 1 },
+    //             });
+    //         //item_order 에 맞게 아이템 정렬
+    //         character.equippedItems.sort(
+    //             (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
+    //         );
+    //         x.equippedItems = character.equippedItems;
+    //         x.rank = i + 1;
+    //         return x;
+    //     })
+    // );
 
     //랭킹 계산하기
     let before_rank = 0;
@@ -258,11 +298,11 @@ async function callUserRanking(req, res) {
             rank: '-',
         };
         RankingList = RankingList.slice(0, length);
-        res.status(200).json({ me, RankingList });
+        return res.status(200).json({ me, RankingList });
     } else {
         let me = RankingList.find((el) => el.email == user.email);
         RankingList = RankingList.slice(0, length);
-        res.status(200).json({ me, RankingList });
+        return res.status(200).json({ me, RankingList });
     }
 }
 
