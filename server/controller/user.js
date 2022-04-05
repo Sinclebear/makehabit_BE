@@ -224,38 +224,6 @@ async function callUserRanking(req, res) {
         })
     );
 
-    // for (const i of RankingList) {
-    //     let [character] = await Character.find({ userId: i._id }, { equippedItems: 1 });
-
-    //     let equippedItems = [];
-    //     for (const j of character.equippedItems) equippedItems.push(items[j]);
-
-    //     equippedItems.sort(
-    //         (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
-    //     );
-    //     i.equippedItems = equippedItems;
-    //     i.rank = r++;
-    // }
-    // console.timeEnd('b');
-
-    // RankingList = await Promise.all(
-    //     RankingList.map(async (x, i) => {
-    //         let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
-    //             .lean()
-    //             .populate({
-    //                 path: 'equippedItems',
-    //                 select: { _id: 0, category: 1, itemImgUrl: 1 },
-    //             });
-    //         //item_order 에 맞게 아이템 정렬
-    //         character.equippedItems.sort(
-    //             (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
-    //         );
-    //         x.equippedItems = character.equippedItems;
-    //         x.rank = i + 1;
-    //         return x;
-    //     })
-    // );
-
     //랭킹 계산하기
     let before_rank = 0;
     let before_proofCnt = -1;
