@@ -7,7 +7,7 @@
 # 서비스 설명
 
 [메인 ReadMe.md](https://github.com/Sinclebear/makehabit_BE.git) 를 먼저 참고 해주세요<br>
-[서비스 소개 영상](https://makehabit.co.kr/)
+[서비스 홈페이지](https://makehabit.co.kr/)
 
 <br>
 
@@ -64,7 +64,7 @@
 <summary>서비스 아키텍쳐</summary>
 <div markdown="1">
 
-![뽀모모아키텍쳐v2](https://user-images.githubusercontent.com/85975904/151278794-c81d778e-31d5-4b89-af24-7a44b4b322d2.png)
+![습관삼끼아키텍쳐v2](https://makehabit.s3.ap-northeast-2.amazonaws.com/origin/721649252008638.PNG)
 
 </div>
 </details>
@@ -76,11 +76,9 @@
 <details>
 <summary>API 명세서</summary>
 <div markdown="1">
+<br>
 
-![auth](https://user-images.githubusercontent.com/87928719/151182062-10082d50-771c-4835-992a-be3f1c5d034e.PNG)
-![users](https://user-images.githubusercontent.com/87928719/151182046-13c8f50a-da55-4e85-b68f-e0ee2ed242d6.png)
-![studyRoom](https://user-images.githubusercontent.com/87928719/151182076-8896433d-2e7e-45e1-9c45-24e4ca46761d.png)
-![post](https://user-images.githubusercontent.com/87928719/151182093-e3c120e9-cc38-4eb6-a706-4068b04534fb.png)
+[API 명세서 노션 페이지](https://witty-board-2e4.notion.site/API-8502ee36812b49cbbe18f072cb8a70c2)
 
 </div>
 </details>
