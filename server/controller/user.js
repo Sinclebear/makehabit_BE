@@ -53,7 +53,19 @@ async function signup(req, res) {
             });
         }
 
-        const user = new User({ email, nickname, password, proofCnt: 0 });
+        const user = new User({
+            email,
+            nickname,
+            password,
+            proofCnt: 0,
+            equippedItems: [
+                '62345f283a3469d4462a5e7f',
+                '62345f4c3a3469d4462a5e80',
+                '62345f683a3469d4462a5e81',
+                '62345f7b3a3469d4462a5e82',
+                '62345f933a3469d4462a5e83',
+            ],
+        });
         await user.save();
         await Character.create({
             userId: user._id,
