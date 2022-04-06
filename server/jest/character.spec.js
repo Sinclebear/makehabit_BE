@@ -5,6 +5,7 @@ const characterCtl = require('../controller/character');
 
 jest.mock('../models');
 const Character = require('../models/character');
+const User = require('../models/user');
 const Item = require('../models/item');
 test('getAllItems() 정상 작동 시', async () => {
     Character.findOne = jest.fn();
@@ -13,6 +14,8 @@ test('getAllItems() 정상 작동 시', async () => {
         equippedItems: [1, 2, 3],
         haveItems: [1, 2, 3, 4, 5],
     });
+
+    User.updateOne = jest.fn();
     const mockedJson = jest.fn();
 
     Item.find = jest.fn();

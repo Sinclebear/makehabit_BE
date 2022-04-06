@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi');
 const bcrypt = require('bcrypt');
 const Character = require('../models/character');
+const Item = require('../models/item');
 // 회원가입시 각 입력 항목 유효성 검사
 // 이메일, 닉네임 체크 api 에서도 사용하기 위해 각 validation(joi obj) 분리
 const email_validation = joi.object({
@@ -52,7 +53,19 @@ async function signup(req, res) {
             });
         }
 
-        const user = new User({ email, nickname, password, proofCnt: 0 });
+        const user = new User({
+            email,
+            nickname,
+            password,
+            proofCnt: 0,
+            equippedItems: [
+                '62345f283a3469d4462a5e7f',
+                '62345f4c3a3469d4462a5e80',
+                '62345f683a3469d4462a5e81',
+                '62345f7b3a3469d4462a5e82',
+                '62345f933a3469d4462a5e83',
+            ],
+        });
         await user.save();
         await Character.create({
             userId: user._id,
@@ -188,35 +201,55 @@ async function checkLogin(req, res) {
 async function callUserRanking(req, res) {
     const { user } = res.locals; // user object
     const { length } = req.query;
-
     let RankingList;
-    RankingList = await User.find({}, { _id: 1, email: 1, nickname: 1, proofCnt: 1 })
+
+    RankingList = await User.find(
+        {},
+        { _id: 1, email: 1, nickname: 1, proofCnt: 1, equippedItems: 1 }
+    )
         .sort({ proofCnt: -1 })
         .lean();
 
     // 캐릭터 옷 입는 순서를 맞출 기준이 되는 배열 item_order
-    let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
+    //let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
 
-    //유저 캐릭터 정보 끼워넣기
-    RankingList = await Promise.all(
-        RankingList.map(async (x, i) => {
-            let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 })
-                .lean()
-                .populate({
-                    path: 'equippedItems',
-                    select: { _id: 0, category: 1, itemImgUrl: 1 },
-                });
-            //item_order 에 맞게 아이템 정렬
-            character.equippedItems.sort(
-                (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
-            );
-            x.equippedItems = character.equippedItems;
-            x.rank = i + 1;
-            return x;
-        })
-    );
+    //전체 아이템 리스트 찾아오기
+
+    let items_find = await Item.find({});
+    let items = {};
+    for (const i of items_find) {
+        items[i._id] = {
+            category: i.category,
+            itemImgUrl: i.itemImgUrl,
+        };
+    }
+
+    RankingList.map((x, i) => {
+        let equipped = [];
+        for (const j of x.equippedItems) equipped.push(items[j]);
+        x.equippedItems = equipped;
+        x.rank = i + 1;
+        return x;
+    });
+
+    // await Promise.all(
+    //     RankingList.map(async (x, i) => {
+    //         //let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 }).lean();
+
+    //         let equippedItems = [];
+    //         for (const j of character.equippedItems) equippedItems.push(items[j]);
+    //         //item_order 에 맞게 아이템 정렬
+    //         character.equippedItems.sort(
+    //             (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
+    //         );
+    //         x.equippedItems = equippedItems;
+    //         x.rank = i + 1;
+    //         return x;
+    //     })
+    // );
 
     //랭킹 계산하기
+
     let before_rank = 0;
     let before_proofCnt = -1;
     RankingList = RankingList.map((x) => {
@@ -257,12 +290,13 @@ async function callUserRanking(req, res) {
             ],
             rank: '-',
         };
+
         RankingList = RankingList.slice(0, length);
-        res.status(200).json({ me, RankingList });
+        return res.status(200).json({ me, RankingList });
     } else {
         let me = RankingList.find((el) => el.email == user.email);
         RankingList = RankingList.slice(0, length);
-        res.status(200).json({ me, RankingList });
+        return res.status(200).json({ me, RankingList });
     }
 }
 
