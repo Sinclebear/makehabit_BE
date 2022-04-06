@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema(
         proofCnt: {
             type: Number,
         },
+        equippedItems: {
+            type: [{ type: mongoose.Schema.Types.ObjectId }],
+        },
     },
     { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
