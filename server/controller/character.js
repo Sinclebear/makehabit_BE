@@ -65,7 +65,7 @@ async function buyOrChangeItem(req, res) {
         if (!totalPrice) {
             // 구매한 아이템이 없으니까 장착만
             await Character.updateOne({ userId }, { $set: { equippedItems: items } });
-            await User.updateOne({ userId }, { $set: { equippedItems: items } });
+            await User.updateOne({ _id: userId }, { $set: { equippedItems: items } });
             return res.status(201).json({
                 message: '아이템 장착 완료',
             });
@@ -88,7 +88,7 @@ async function buyOrChangeItem(req, res) {
                 { userId },
                 { $set: { characterCurrentPoint: newPrice, equippedItems: items, haveItems } }
             );
-            await User.updateOne({ userId }, { $set: { equippedItems: items } });
+            await User.updateOne({ _id: userId }, { $set: { equippedItems: items } });
             return res.status(201).json({ message: '구매완료' });
         }
     } catch (err) {
