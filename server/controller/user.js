@@ -190,14 +190,18 @@ async function callUserRanking(req, res) {
     const { user } = res.locals; // user object
     const { length } = req.query;
     let RankingList;
-    RankingList = await User.find({}, { _id: 1, email: 1, nickname: 1, proofCnt: 1 })
+
+    RankingList = await User.find(
+        {},
+        { _id: 1, email: 1, nickname: 1, proofCnt: 1, equippedItems: 1 }
+    )
         .sort({ proofCnt: -1 })
         .lean();
 
     // 캐릭터 옷 입는 순서를 맞출 기준이 되는 배열 item_order
-    let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
+    //let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
 
-    //유저 캐릭터 정보 끼워넣기
+    //전체 아이템 리스트 찾아오기
 
     let items_find = await Item.find({});
     let items = {};
@@ -208,23 +212,32 @@ async function callUserRanking(req, res) {
         };
     }
 
-    await Promise.all(
-        RankingList.map(async (x, i) => {
-            let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 }).lean();
-            let equippedItems = [];
-            for (const j of character.equippedItems) equippedItems.push(items[j]);
+    RankingList.map((x, i) => {
+        let equipped = [];
+        for (const j of x.equippedItems) equipped.push(items[j]);
+        x.equippedItems = equipped;
+        x.rank = i + 1;
+        return x;
+    });
 
-            //item_order 에 맞게 아이템 정렬
-            character.equippedItems.sort(
-                (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
-            );
-            x.equippedItems = equippedItems;
-            x.rank = i + 1;
-            return x;
-        })
-    );
+    // await Promise.all(
+    //     RankingList.map(async (x, i) => {
+    //         //let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 }).lean();
+
+    //         let equippedItems = [];
+    //         for (const j of character.equippedItems) equippedItems.push(items[j]);
+    //         //item_order 에 맞게 아이템 정렬
+    //         character.equippedItems.sort(
+    //             (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
+    //         );
+    //         x.equippedItems = equippedItems;
+    //         x.rank = i + 1;
+    //         return x;
+    //     })
+    // );
 
     //랭킹 계산하기
+
     let before_rank = 0;
     let before_proofCnt = -1;
     RankingList = RankingList.map((x) => {
@@ -265,6 +278,7 @@ async function callUserRanking(req, res) {
             ],
             rank: '-',
         };
+
         RankingList = RankingList.slice(0, length);
         return res.status(200).json({ me, RankingList });
     } else {

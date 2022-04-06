@@ -1,4 +1,5 @@
 const Character = require('../models/character');
+const User = require('../models/user');
 const Item = require('../models/item');
 
 // 아이템 조회 API // 이중정렬 도전 얘만하면 잘 수있음..
@@ -64,16 +65,15 @@ async function buyOrChangeItem(req, res) {
         if (!totalPrice) {
             // 구매한 아이템이 없으니까 장착만
             await Character.updateOne({ userId }, { $set: { equippedItems: items } });
-            res.status(201).json({
+            await User.updateOne({ userId }, { $set: { equippedItems: items } });
+            return res.status(201).json({
                 message: '아이템 장착 완료',
             });
-            return;
         } else if (newPrice < 0) {
             //금액이 부족하니까 못삼
-            res.status(400).json({
+            return res.status(400).json({
                 message: '포인트가 부족합니다.',
             });
-            return;
         } else {
             // console.log('구매가능');
             //여기는 새로운 아이템 찾아서 haveItems에 추가하는 부분
@@ -83,16 +83,13 @@ async function buyOrChangeItem(req, res) {
                     haveItems.push(item);
                 }
             });
-
-            // console.log('test');
             //가격이랑 equippedItems이랑 haveItems 수정
             await Character.updateOne(
                 { userId },
                 { $set: { characterCurrentPoint: newPrice, equippedItems: items, haveItems } }
             );
-            // console.log('test');
-
-            res.status(201).json({ message: '구매완료' });
+            await User.updateOne({ userId }, { $set: { equippedItems: items } });
+            return res.status(201).json({ message: '구매완료' });
         }
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
