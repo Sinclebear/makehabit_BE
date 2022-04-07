@@ -63,17 +63,17 @@
 |       jsonwebtoken        | Json 포맷으로 사용자 속성을 저장 |  8.5.1   |
 |          moment           |       날짜 관련 라이브러리       |  2.29.1  |
 |         mongoose          |         데이터베이스 ORM         |  6.2.4   |
-|          morgan           |            로그 관리             |  1.10.0  |
 |          multer           |          이미지 업로드           |  1.4.4   |
 |         multer-s3         |        이미지 업로드 (S3)        |  2.10.0  |
 |         passport          |              로그인              |  0.5.2   |
 |      passport-kakao       |          카카오 로그인           |  1.0.1   |
 |            s3             |              aws S3              |  4.4.0   |
 |       sanitize-html       |             XSS방어              |  2.7.0   |
-|          winston          |            로그 관리             |  3.6.0   |
-| winston-daily-rotate-file |          로그 파일 관리          |  4.6.1   |
-|     winston-telegram      |        로그 텔레그램 전송        |  2.5.0   |
-
+|          sharp          |            로그 관리             |  3.6.0   |
+| jest |          테스트코드 작성          |  27.5.1   |
+|     prettier      |        코드 포맷팅        |  2.5.1   |
+|     supertest      |        테스트코드 작성        |  6.2.2   |
+|     swagger      |        API 문서화        |  4.3.0   |
 <br>
 
 <h1>
