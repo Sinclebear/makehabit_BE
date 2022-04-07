@@ -63,17 +63,17 @@
 |       jsonwebtoken        | Json 포맷으로 사용자 속성을 저장 |  8.5.1   |
 |          moment           |       날짜 관련 라이브러리       |  2.29.1  |
 |         mongoose          |         데이터베이스 ORM         |  6.2.4   |
-|          morgan           |            로그 관리             |  1.10.0  |
 |          multer           |          이미지 업로드           |  1.4.4   |
 |         multer-s3         |        이미지 업로드 (S3)        |  2.10.0  |
 |         passport          |              로그인              |  0.5.2   |
 |      passport-kakao       |          카카오 로그인           |  1.0.1   |
 |            s3             |              aws S3              |  4.4.0   |
 |       sanitize-html       |             XSS방어              |  2.7.0   |
-|          winston          |            로그 관리             |  3.6.0   |
-| winston-daily-rotate-file |          로그 파일 관리          |  4.6.1   |
-|     winston-telegram      |        로그 텔레그램 전송        |  2.5.0   |
-
+|          sharp          |            로그 관리             |  3.6.0   |
+| jest |          테스트코드 작성          |  27.5.1   |
+|     prettier      |        코드 포맷팅        |  2.5.1   |
+|     supertest      |        테스트코드 작성        |  6.2.2   |
+|     swagger      |        API 문서화        |  4.3.0   |
 <br>
 
 <h1>
@@ -211,8 +211,38 @@
 </div>
 </details>
 
+<br>
+<br>
+
+# 📝 Git Convention
+
+<h4> ○&nbsp;&nbsp;main: 기준이 되는 브랜치로 바로 배포가 가능한 수준의 상태로 유지되는 브랜치 입니다. </h4>
+<h4> ○&nbsp;&nbsp;develop : 개발 브랜치로 이 브랜치를 기준으로 각자 작업한 기능들을 합칩니다. </h4>
+<h4> ○&nbsp;&nbsp;feature (mypage, challenge, ranking  ... )  : 단위 기능을 개발하는 브랜치로 기능 개발이 완료되면 develop 브랜치에 합칩니다. </h4>
 
 
+
+```java
+1. main 브랜치에서 시작 합니다.
+
+2. 동일한 브랜치를 develop에도 생성을 합니다. 팀원들은 이 develop 브랜치에서 개발을 진행합니다.
+
+3. 개발을 진행하다가 마이 페이지, 랭킹 등의 기능 구현이 필요할 경우 
+   A팀원은 develop 브랜치에서 feature 브랜치를 하나 생성해서 마이 페이지 기능을 구현하고
+   B팀원은 develop 브랜치에서 feature 브랜치를 하나 생성해서 랭킹 기능을 구현합니다.
+   
+4. 완료된 feature 브랜치는 검토를 거쳐 develop 브랜치에 Pull Request를 보냅니다.
+
+5. feature 브랜치를 develop 브랜치로 합치기 전에 반드시 팀원들과 함께 수정 사항에 대한 코드를 리뷰 한 후 merge를 진행합니다. 
+
+6. 추가로 기능 구현이 필요하거나 버그를 발견한 경우 issue에 해당 사안을 작성합니다.
+
+7. 이슈에 남긴 내용은 해당 작업을 진행했던 개발자가 확인 후, 3 ~ 5 과정을 거쳐 close 시킵니다.
+
+8. 이상이 없는 상태의 develop 브랜치는 주기적으로 main 브랜치로 합칩니다.
+```
+
+<img alt="습관삼끼" src="https://t1.daumcdn.net/cfile/tistory/99CD994C5E69CCF223" width="50%"> 
 
 <br>
 <br>
