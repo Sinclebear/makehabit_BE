@@ -1,9 +1,6 @@
 
 # 습관삼끼
-
-<span align="center" style="width=50%; height=200px">
-  <img width="50%" alt="스크린샷 2021-12-09 오후 2 32 42" src="https://imagedelivery.net/v7-TZByhOiJbNM9RaUdzSA/810a5961-1b65-49ac-a1de-b99238ef7700/public">
-</span>
+<a href="https://makehabit.co.kr/"> <img alt="Qries" src="https://imagedelivery.net/v7-TZByhOiJbNM9RaUdzSA/810a5961-1b65-49ac-a1de-b99238ef7700/public" width="500" height="250"> </a>
 
 ## 작심삼일을 습관으로
 
@@ -17,21 +14,18 @@
 자신만의 캐릭터와 함께하는 30일간의 즐거운 습관 만들기
 </p>
 
-### :arrow_down: Click!
-[![5조 습관삼끼 웹사이트](https://imagedelivery.net/v7-TZByhOiJbNM9RaUdzSA/8f82a931-3b08-4455-7303-3d12cdba3d00/public)](https://makehabit.co.kr) 
-</br>
+<br>
 
-<br><br>
+## 📌 주요 기능
 
-
-
-[메인 ReadMe.md](https://github.com/Sinclebear/makehabit_BE.git) 를 먼저 참고 해주세요<br>
-[서비스 홈페이지](https://makehabit.co.kr/)
+|                                                          <a href="">🔗로그인/회원가입</a>                                                           |                                                       <a href="">🔗챌린지개설</a>                                                        |                                                       <a href="">🔗챌린지인증</a>                                                        |                                                          <a href="">🔗랭킹페이지</a>                                                           |                                                          <a href="">🔗캐릭터샵</a>                                                           |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="320" alt="로그인/회원가입" src="https://user-images.githubusercontent.com/96245651/161957188-13758b80-91ec-4614-b1a3-a0a87abb4ded.gif"> | <img width="320" alt="개설" src="https://user-images.githubusercontent.com/96245651/161957249-97fdc881-096a-4477-8ad8-df02519df4e4.gif"> | <img width="320" alt="인증" src="https://user-images.githubusercontent.com/96245651/161957290-ef987088-6410-40bd-a98c-efb4daa3f4ec.gif"> | <img width="320" alt="랭킹페이지" src="https://user-images.githubusercontent.com/96245651/161957083-ac4710a9-2594-48d1-b78b-f17c46e5fdbc.gif"> | <img width="320" alt="캐릭터샵" src="https://user-images.githubusercontent.com/96245651/161951520-ea31b791-77b8-4b97-b273-6fcedf734669.gif"> |
 
 <br>
 
 # 🧑🏼 개발기간 및 팀원소개
-## 기간: 2022.02.25 ~ 2022.03.22
+## 기간: 2022.02.25. ~ 2022.04.07.
 
 
 
@@ -108,7 +102,7 @@
 
 <br>
 
-# 📌 트러블 슈팅
+# 🛠️ 트러블 슈팅
 
 
 
