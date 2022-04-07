@@ -81,7 +81,7 @@
 <div markdown="1">
 <br>
   
-![습관삼끼아키텍쳐v2](https://makehabit.s3.ap-northeast-2.amazonaws.com/origin/721649252008638.PNG)
+![습관삼끼아키텍쳐v2](https://imagedelivery.net/v7-TZByhOiJbNM9RaUdzSA/8266ed0b-a588-4053-6d95-d36952d68100/public)
 
 </div>
 </details>
