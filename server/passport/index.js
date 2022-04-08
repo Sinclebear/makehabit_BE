@@ -36,6 +36,13 @@ module.exports = () => {
                             email: profile.id,
                             provider: 'kakao',
                             proofCnt: 0,
+                            equippedItems: [
+                                '62345f283a3469d4462a5e7f',
+                                '62345f4c3a3469d4462a5e80',
+                                '62345f683a3469d4462a5e81',
+                                '62345f7b3a3469d4462a5e82',
+                                '62345f933a3469d4462a5e83',
+                            ],
                         });
                         await Character.create({
                             userId: newUser._id,
