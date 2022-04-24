@@ -31,7 +31,6 @@ test('각 challenge에 대해 participate 안에 challengeId(_id)가 존재하�
 });
 
 test('챌린지 리스트가 주어졌을 때 각 첼린지의 startAt 기준으로 status 값을 계산해 삽입해준다.', async () => {
-    //Date.now = jest.fn(() => +new Date('2022-03-10'));
     let challenges = [
         { startAt: new Date('2022-03-06') },
         { startAt: new Date('2022-03-15') },
@@ -74,7 +73,6 @@ test('첼린지 리스트가 주어졌을때 각 첼리지에 대해 인증 횟�
 });
 
 test('경과 날짜, round 계산', async () => {
-    //const moment = require('moment');
     Date.now = jest.fn(() => new Date('2022-03-10T15:00:00.000Z'));
 
     let challenges = [

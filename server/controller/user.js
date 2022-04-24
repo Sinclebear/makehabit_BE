@@ -187,7 +187,7 @@ async function checkNickname(req, res) {
 
 // 로그인 체크
 async function checkLogin(req, res) {
-    const { user } = res.locals; // user object
+    const { user } = res.locals;
     if (user === undefined) {
         return res.status(400).json({ message: '로그인 후 사용하시오' });
     }
@@ -199,7 +199,7 @@ async function checkLogin(req, res) {
 
 // 유저 랭킹 정보 불러오기
 async function callUserRanking(req, res) {
-    const { user } = res.locals; // user object
+    const { user } = res.locals;
     const { length } = req.query;
     let RankingList;
 
@@ -209,9 +209,6 @@ async function callUserRanking(req, res) {
     )
         .sort({ proofCnt: -1 })
         .lean();
-
-    // 캐릭터 옷 입는 순서를 맞출 기준이 되는 배열 item_order
-    //let item_order = ['background', 'color', 'clothes', 'acc', 'emotion'];
 
     //전체 아이템 리스트 찾아오기
 
@@ -231,22 +228,6 @@ async function callUserRanking(req, res) {
         x.rank = i + 1;
         return x;
     });
-
-    // await Promise.all(
-    //     RankingList.map(async (x, i) => {
-    //         //let [character] = await Character.find({ userId: x._id }, { equippedItems: 1 }).lean();
-
-    //         let equippedItems = [];
-    //         for (const j of character.equippedItems) equippedItems.push(items[j]);
-    //         //item_order 에 맞게 아이템 정렬
-    //         character.equippedItems.sort(
-    //             (a, b) => item_order.indexOf(a.category) - item_order.indexOf(b.category)
-    //         );
-    //         x.equippedItems = equippedItems;
-    //         x.rank = i + 1;
-    //         return x;
-    //     })
-    // );
 
     //랭킹 계산하기
 

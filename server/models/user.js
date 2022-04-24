@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', function (next) {
-    const user = this; // userSchema
+    const user = this;
     // user document의 'password' 가 수정되었을 경우. isModified가 document를 새로 추가하는 경우에도 동작함.
     if (user.isModified('password')) {
         // genSalt : salt 생성
@@ -45,7 +45,7 @@ userSchema.pre('save', function (next) {
             bcrypt.hash(user.password, salt, function (err, hashedPassword) {
                 if (err) return next(err);
                 user.password = hashedPassword; // 평문 user.password를 hashedPassword 로 입력
-                next(); // save 진행
+                next();
             });
         });
     } else {
@@ -54,7 +54,6 @@ userSchema.pre('save', function (next) {
     }
 });
 
-// 버츄얼 필드
 userSchema.virtual('userId').get(function () {
     return this._id.toHexString();
 });

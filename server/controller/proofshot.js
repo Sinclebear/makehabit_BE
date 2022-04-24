@@ -19,11 +19,11 @@ async function authProofshot(req, res) {
         }
 
         const challenge = await Challenge.findById(challengeId).lean();
-        // console.log(challenge);
 
-        // 참가회수? 참가자 목록 불러오기 아닌가?
+        // 참가회수
         const joinPeople = challenge.participants;
         challenge['participants'] = joinPeople.length;
+
         // round
         const start = challenge.startAt;
         const cur = new Date().toLocaleDateString();
@@ -45,8 +45,6 @@ async function authProofshot(req, res) {
 async function uploadProofshot(req, res) {
     try {
         let { user } = res.locals;
-        // console.log(user);
-        // console.log(user.userId);
 
         // 비로그인 사용자 처리
         if (user === undefined) {
@@ -75,7 +73,6 @@ async function uploadProofshot(req, res) {
             challengeId,
             createdAt: { $gte: today_date },
         });
-        //console.log(todayProofshot);
 
         // 오늘 00시 이후 등록한 인증샷이 있는 경우, 400 에러 발생 후 튕겨내기.
         if (todayProofshot.length > 0) {
@@ -107,8 +104,8 @@ async function uploadProofshot(req, res) {
                 await userCharacter.save();
             }
 
-            let proofCnt = user.proofCnt + 1; //~
-            await User.updateOne({ _id: user._id }, { $set: { proofCnt } }); //~
+            let proofCnt = user.proofCnt + 1;
+            await User.updateOne({ _id: user._id }, { $set: { proofCnt } });
             return res
                 .status(201)
                 .json({ totalCnt, point, message: '인증샷 등록이 완료되었습니다.' });
@@ -122,7 +119,6 @@ async function uploadProofshot(req, res) {
 // 인증페이지 - 인증 페이지 수정
 async function modifyProofshot(req, res) {
     try {
-        // console.log('예');
         let { user } = res.locals;
 
         // 비로그인 사용자 처리

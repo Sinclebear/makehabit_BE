@@ -25,7 +25,6 @@ const proofShotSchema = new mongoose.Schema(
     { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
 
-// 버츄얼 필드
 proofShotSchema.virtual('proofShotId').get(function () {
     return this._id.toHexString();
 });

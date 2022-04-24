@@ -20,7 +20,7 @@ router.post('/checkNickname', userCtl.checkNickname);
 router.get('/checkLogin', authMiddleware, userCtl.checkLogin);
 router.get('/callUserRanking', authMiddleware, userCtl.callUserRanking);
 
-router.get('/kakao', passport.authenticate('kakao')); // https 붙이면 연결시켜봅시다
+router.get('/kakao', passport.authenticate('kakao'));
 router.get('/kakao/callback', authCtl.kakaoCallback);
 
 module.exports = router;

@@ -25,7 +25,6 @@ const itemSchema = new mongoose.Schema(
     { timestamps: true } // createdAt, updatedAt 으로 Date형 객체 입력)
 );
 
-// 버츄얼 필드
 itemSchema.virtual('itemId').get(function () {
     return this._id.toHexString();
 });

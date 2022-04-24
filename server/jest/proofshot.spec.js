@@ -66,11 +66,10 @@ test('uploadProofshot() 금일 이미 업로드한 proofShot이 있다면 업로
     }));
 
     proofShot.find = jest.fn();
-    proofShot.find.mockResolvedValue([1]); //오늘 이미 업로드한 인증샷이 있다.
+    proofShot.find.mockResolvedValue([1]);
     proofShot.create = jest.fn();
     proofShot.count = jest.fn().mockResolvedValue(2);
-    //인증샷 개수 (포인트 지급 위해서) => 3의 배수:300  ,else : 100
-    //jest.spyOn(User.prototype, 'save').mockImplementationOnce(() => {});
+
     jest.useFakeTimers('modern');
     jest.setSystemTime(new Date(2022, 2, 10));
 
@@ -121,12 +120,11 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
     calc.calcProbability = jest.fn();
     calc.calcProbability.mockReturnValue(500);
     proofShot.find = jest.fn();
-    proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
+    proofShot.find.mockResolvedValue([]);
     proofShot.create = jest.fn();
     proofShot.count = jest.fn().mockResolvedValue(3);
     User.updateOne = jest.fn();
-    //인증샷 개수 (포인트 지급 위해서) => 3의 배수:300  ,else : 100
-    //jest.spyOn(User.prototype, 'save').mockImplementationOnce(() => {});
+
     jest.useFakeTimers('modern');
     jest.setSystemTime(new Date(2022, 2, 10));
 
@@ -178,11 +176,10 @@ test('uploadProofshot() proofShot을 업로드 했을때 proofShot의 개수가 
 
     User.updateOne = jest.fn();
     proofShot.find = jest.fn();
-    proofShot.find.mockResolvedValue([]); //오늘의 인증샷 없을 때
+    proofShot.find.mockResolvedValue([]);
     proofShot.create = jest.fn();
     proofShot.count = jest.fn().mockResolvedValue(2);
-    //인증샷 개수 (포인트 지급 위해서) => 3의 배수:300  ,else : 100
-    //jest.spyOn(User.prototype, 'save').mockImplementationOnce(() => {});
+
     jest.useFakeTimers('modern');
     jest.setSystemTime(new Date(2022, 2, 10));
 

@@ -16,7 +16,7 @@ async function recommendChallenge(req, res) {
 
         const { length } = req.query;
         let challenges;
-        let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
+        let today = new Date(moment().format('YYYY-MM-DD'));
         challenges = await Challenge.find({
             startAt: { $gte: new Date(moment(today).add(-9, 'hours')) },
         }).lean();
@@ -43,7 +43,7 @@ async function recommendChallenge(req, res) {
     }
 }
 
-//메인 - 검색기능 // isLike ++++++++++++++++++++++++++++++
+//메인 - 검색기능
 async function searchChallenge(req, res) {
     try {
         let userId;
@@ -54,7 +54,7 @@ async function searchChallenge(req, res) {
         }
 
         const { title } = req.query;
-        let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00
+        let today = new Date(moment().format('YYYY-MM-DD'));
 
         const existChallenges = await Challenge.find(
             {
@@ -64,13 +64,13 @@ async function searchChallenge(req, res) {
             { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
         )
             .sort({ startAt: 1 })
-            .lean(); // populate.._doc..
+            .lean();
         calc.plusChallengeId(existChallenges);
         calc.calcParticipants(existChallenges);
         calc.calcPastDaysAndRound(existChallenges);
         calc.calcStatus(existChallenges);
         await calc.calcIsLike(existChallenges, userId);
-        const challenges = existChallenges; //날짜 내림차순 으로 정리
+        const challenges = existChallenges;
 
         for (const i of challenges) {
             i.thumbnail = i.thumbnail.replace('origin', 'thumb');
@@ -82,7 +82,7 @@ async function searchChallenge(req, res) {
     }
 }
 
-// 카테고리 페이지 목록조회 // 걱정됐죠 ㅜ.ㅜ
+// 카테고리 페이지 목록조회
 async function getCategoryList(req, res) {
     try {
         let userId;
@@ -99,7 +99,7 @@ async function getCategoryList(req, res) {
             existChallenges = await Challenge.find(
                 { startAt: { $gte: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-            ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            )
                 .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
@@ -117,10 +117,10 @@ async function getCategoryList(req, res) {
                     participants: 1,
                     thumbnail: 1,
                     title: 1,
-                    startAt: 1, //{ $gte: today_date }
+                    startAt: 1,
                 }
             )
-                .sort({ startAt: 1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
         } else if (categoryId === 'popular') {
@@ -128,7 +128,7 @@ async function getCategoryList(req, res) {
                 { startAt: { $gte: new Date(moment(today).add(-9, 'hours')) } },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
             )
-                .sort({ startAt: 1 }) // projection으로 대체가능  질문..5개 가져오는 기준?!
+                .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
             existChallenges = notSortedExistChallenges.sort(
@@ -141,7 +141,7 @@ async function getCategoryList(req, res) {
                     startAt: { $gte: new Date(moment(today).add(-9, 'hours')) },
                 },
                 { _id: 1, category: 1, participants: 1, thumbnail: 1, title: 1, startAt: 1 }
-            ) // projection으로 대체가능  질문..5개 가져오는 기준?!
+            )
                 .sort({ startAt: 1 })
                 .limit(length)
                 .lean();
@@ -309,8 +309,6 @@ async function changeChallenge(req, res) {
 
 // 챌린지 참여하기 기능 구현 완료
 async function joinChallenge(req, res) {
-    //일단 challengeId로 조회해야함
-
     if (!res.locals.user) {
         res.status(401).json({
             message: '로그인 후 사용하시오',
@@ -361,8 +359,6 @@ async function joinCancelChallenge(req, res) {
     try {
         const { userId } = res.locals.user;
         const { challengeId } = req.params;
-
-        // 이 부분은 챌린지 시작 전에만 참가할 수 있도록 수정한 부분입니다.
         const statusChallenge = await Challenge.findById(challengeId).lean();
         calc.calcStatus([statusChallenge]);
         if (statusChallenge.status !== 1) {

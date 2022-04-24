@@ -2,7 +2,7 @@ const Character = require('../models/character');
 const User = require('../models/user');
 const Item = require('../models/item');
 
-// 아이템 조회 API // 이중정렬 도전 얘만하면 잘 수있음..
+// 아이템 조회 API
 async function getAllItems(req, res) {
     if (!res.locals.user) {
         res.status(401).json({
@@ -28,7 +28,7 @@ async function getAllItems(req, res) {
                 price: 1,
             })
             .sort({ category: 1, categoryItemNum: 1 })
-            .lean(); // 이중정렬 그런데 이거 말고 내 마음대로 정렬할 수 있는 방법?!
+            .lean();
         items.map((item) => {
             const { itemId } = item; // 수정 SELECT ①
             if (equippedItems.includes(itemId)) {
@@ -48,7 +48,7 @@ async function getAllItems(req, res) {
     }
 }
 
-// 아이템 추가 API 해치운듯
+// 아이템 추가 API
 async function buyOrChangeItem(req, res) {
     if (!res.locals.user) {
         res.status(401).json({
@@ -70,13 +70,12 @@ async function buyOrChangeItem(req, res) {
                 message: '아이템 장착 완료',
             });
         } else if (newPrice < 0) {
-            //금액이 부족하니까 못삼
+            //금액이 부족
             return res.status(400).json({
                 message: '포인트가 부족합니다.',
             });
         } else {
-            // console.log('구매가능');
-            //여기는 새로운 아이템 찾아서 haveItems에 추가하는 부분
+            //새로운 아이템 찾아서 haveItems에 추가
 
             items.map((item) => {
                 if (!haveItems.includes(item)) {

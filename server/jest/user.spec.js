@@ -1,7 +1,3 @@
-//app.js와 같은 레벨에 있어야함
-//supertest로 app.js 가짜 실행
-//실제 서버가 아닌 실행하는 척만 하므로 server.js 는 불러올필요 없음
-//app.js가 http서버면 supertest사용 가능
 const app = require('../app');
 const supertest = require('supertest');
 const mongoose = require('mongoose');

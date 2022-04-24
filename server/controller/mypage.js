@@ -56,7 +56,7 @@ async function getMyChallenge(req, res) {
     }
 }
 
-// 좋아요 모아보기. 시안이 안나와서, 우선 챌린지 보기와 거의 동일하게 작성. calcIsLike만 추가.
+// 좋아요 모아보기
 async function getMyLikeChallenge(req, res) {
     let { user } = res.locals;
     let { status } = req.query;
@@ -66,7 +66,6 @@ async function getMyLikeChallenge(req, res) {
     }
 
     try {
-        // console.log(user);
         user = await User.findOne({ _id: user._id })
             .lean()
             .populate({
@@ -79,16 +78,12 @@ async function getMyLikeChallenge(req, res) {
                     startAt: 1,
                 },
             });
-        // console.log(user);
-
         let raw_challenges = user.likes;
         calc.calcStatus(raw_challenges); // status 필드 추가
         let challenges = raw_challenges.filter((challenge) => {
             return challenge.status === 1; // `시작 전` 상태인 챌린지들만 보여주기
         });
         calc.calcParticipants(challenges); // 참여자 수 필드 추가
-        // await calc.calcUserIsUpload(challenges, user.userId);
-        // calc.calcPastDaysAndRound(challenges);
         await calc.calcIsLike(challenges, user._id); // 좋아요 필드 추가
         for (const i of challenges) {
             i.challengeId = i._id;
@@ -100,7 +95,7 @@ async function getMyLikeChallenge(req, res) {
         else
             return res
                 .status(200)
-                .json({ challenges: challenges.filter((x) => x.status === +status) }); // status 순으로 정렬. 추후에 스펙이 바뀐다면.. 유지.
+                .json({ challenges: challenges.filter((x) => x.status === +status) }); // status 순으로 정렬
     } catch (err) {
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
@@ -108,7 +103,6 @@ async function getMyLikeChallenge(req, res) {
 
 //내 인증샷 모아보기
 async function getMyProofShot(req, res) {
-    // await Proofshot.create({ChallengeId})
     let { user } = res.locals;
     if (user === undefined) {
         return res.status(401).json({ message: '로그인 후 사용하시오' });
@@ -130,7 +124,6 @@ async function getMyProofShot(req, res) {
             }
         }
 
-        // console.log(proofShots);
         return res.status(200).json({ proofShots });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });
@@ -148,13 +141,10 @@ async function getDetailProofShot(req, res) {
         const { proofShotId } = req.params;
         let proofShot = await Proofshot.findOne({
             _id: proofShotId,
-            //userId: user.userId,
         }).lean();
-        // console.log(proofShot);
         proofShot.proofShotId = proofShot._id;
         return res.status(200).json({ proofShot });
     } catch (err) {
-        //console.log(err);
         return res.status(400).json({ message: '잘못된 요청입니다.' });
     }
 }
@@ -183,18 +173,14 @@ async function getCharacterInfo(req, res) {
                 path: 'equippedItems',
                 select: { _id: 0, itemId: '$_id', itemImgUrl: 1 },
             });
-        //console.log(user);
 
         let myUserInfo = await User.findById(user._id);
         character.nickname = myUserInfo.nickname; // character 객체에 `닉네임` 추가
         character.totalParticipateCount = myUserInfo.participate.length; // `총 챌린지 참가 수` 추가
-        //console.log(myUserInfo);
 
         let myProofShots = await Proofshot.find({ userId: user._id });
         character.totalProofCount = myProofShots.length; // `총 인증샷 횟수` 추가
-        //console.log(myProofShots);
 
-        //console.log(character);
         return res.status(200).json({ character });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });
@@ -219,7 +205,7 @@ async function getUserInfo(req, res) {
         let participateCnt = user.participate.length;
         user.participateCnt = participateCnt;
         delete user.participate; // 불필요한 user 내 participate property 삭제
-        // console.log(user);
+
         return res.status(200).json({ user });
     } catch (err) {
         return res.status(401).json({ message: '잘못된 요청입니다.' });

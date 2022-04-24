@@ -11,13 +11,13 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3000', // 요청 URL
+                url: 'http://localhost:3000',
             },
             {
-                url: 'http://52.79.227.179:3000', // 요청 URL
+                url: 'http://52.79.227.179:3000',
             },
             {
-                url: 'https://juhyeon.shop', // 요청 URL
+                url: 'https://juhyeon.shop',
             },
         ],
         components: {

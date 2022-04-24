@@ -7,10 +7,10 @@ const challengeCtl = require('../controller/challenge');
 // 추천 API
 router.get('/main/recommendation', authMiddleware, challengeCtl.recommendChallenge);
 
-//메인 - 검색기능 // isLike ++++++++++++++++++++++++++++++
+//메인 - 검색기능
 router.get('/search', authMiddleware, challengeCtl.searchChallenge);
 
-// 카테고리 페이지 목록조회 // 걱정됐죠 ㅜ.ㅜ
+// 카테고리 페이지 목록조회
 router.get('/category/:categoryId', authMiddleware, challengeCtl.getCategoryList);
 
 // 상세조회 API

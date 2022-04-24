@@ -7,9 +7,6 @@ jest.mock('../models');
 const User = require('../models/user');
 const Challenge = require('../models/challenge');
 test('recommendChallenge에 정상적인 값 입력시 res.json()이 호출된다.', async () => {
-    //Challenge.aggregate = jest.fn();
-    //Challenge.aggregate.mockResolvedValue([{ _id: 1 }, { _id: 2 }]);
-
     const mockedFind = jest.fn();
     mockedFind.mockResolvedValue([
         { _id: 1, likeUsers: 10, thumbnail: '' },
@@ -43,9 +40,6 @@ test('recommendChallenge에 정상적인 값 입력시 res.json()이 호출된�
         challenges: [
             { _id: 1, likeUsers: 10, thumbnail: '' },
             { _id: 3, likeUsers: 5, thumbnail: '' },
-            // { _id: 2, likeUsers: 3 },
-            // { _id: 5, likeUsers: 2 },
-            // { _id: 4, likeUsers: 1 }
         ],
     });
 });
@@ -144,11 +138,6 @@ test('getCategoryList()에 정상적인 값 입력시 lean과 res.json 이 한�
         ],
     });
 });
-
-//이미 테스트 코드로 검증된 calc 모듈 및 단순 DB 접근만
-//하는 로직이라 임시로 잠시 아래 두 케이스는 생략하겠습니다.
-//상세조회 API 임시 생략
-//챌린지 작성 API 테스트 코드 임시 생략
 
 test('joinChallenge() 정상 작동 시', async () => {
     const mockedJson = jest.fn();

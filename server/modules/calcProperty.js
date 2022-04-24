@@ -54,7 +54,7 @@ module.exports = {
         for (const i of challenges) {
             const start = i.startAt;
             const cur = new Date().toLocaleDateString();
-            const end = new Date(cur); //    3/8:15:00
+            const end = new Date(cur);
             const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
             if (dateDiff <= 0) {
                 i.status = 1; //시작 전
@@ -94,7 +94,7 @@ module.exports = {
         for (const i of challenges) {
             const start = i.startAt;
             const cur = new Date().toLocaleDateString();
-            const end = new Date(cur); //    3/8:15:00
+            const end = new Date(cur);
             const dateDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 3600 * 24));
             if (dateDiff < 0) {
                 i.status = 1; //시작 전
@@ -129,7 +129,7 @@ module.exports = {
 
     //경과 날짜, round 계산
     calcPastDaysAndRound: (challenges) => {
-        let today = Date.now(); //moment().format('YYYY-MM-DD'); //2022-03-05 00:00:00
+        let today = Date.now();
         for (const i of challenges) {
             let pastDays = (new Date(today) - new Date(i.startAt)) / (1000 * 60 * 60 * 24);
             pastDays += 1;
@@ -141,7 +141,7 @@ module.exports = {
 
     //유저 금일 업로드 체크 await
     calcUserIsUpload: async (challenges, userId) => {
-        let today = new Date(moment().format('YYYY-MM-DD')); //2022-03-05 00:00:00Z     15:00Z
+        let today = new Date(moment().format('YYYY-MM-DD'));
         for (const i of challenges) {
             const todayProofshot = await Proofshot.findOne({
                 challengeId: i._id,

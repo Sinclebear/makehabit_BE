@@ -1,6 +1,5 @@
 require('dotenv').config();
 const authMiddleware = require('../middlewares/auth-middleware');
-//jest.mock('../models');
 
 const User = require('../models/user');
 test('정상적인 토큰을 넣은경우 토큰에 들어있는 email 로 findOne 실행한다.', () => {
@@ -61,5 +60,4 @@ test('변조된 토큰으로 접근시 로그인 후 사용하세요 메시지�
         message: '로그인 후 사용하시오',
         user: null,
     });
-    //expect(User.findOne).toHaveBeenCalledTimes(1);
 });
