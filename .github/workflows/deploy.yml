@@ -4,60 +4,60 @@
 name: deploy
 
 on:
-    pull_request:
-        branches: [dev]
-        types: [closed]
+  pull_request:
+    branches: [main]
+    types: [closed]
 
 jobs:
-    merge_job:
-        # this job will only run if the PR has been merged
-        if: github.event.pull_request.merged == true
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [14.x]
-                # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-        steps:
-            - run: |
-                  echo PR #${{ github.event.number }} has been merged
-            - name: Checkout source code.
-              uses: actions/checkout@v2
+  merge_job:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      - run: |
+          echo PR #${{ github.event.number }} has been merged
+      - name: Checkout source code.
+        uses: actions/checkout@v2
 
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
 
-            - name: create env file
-              working-directory: ./server
-              run: |
-                  touch .env
-                  cat << EOF >> .env
-                  ${{ secrets.ENV }}
+      - name: create env file
+        working-directory: ./server
+        run: |
+          touch .env
+          cat << EOF >> .env
+          ${{ secrets.ENV }}
 
-            - name: zip distributions
-              run: zip -r make-habit.zip ./server ./appspec.yml ./scripts
+      - name: zip distributions
+        run: zip -r make-habit.zip ./server ./appspec.yml ./scripts
 
-            - name: AWS configure credentials
-              uses: aws-actions/configure-aws-credentials@v1
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ap-northeast-2
-            - name: upload to S3
-              run: aws s3 cp --region ap-northeast-2 ./make-habit.zip s3://makehabit/public/
-            - name: deploy with AWS codeDeploy
-              run: aws deploy create-deployment
-                  --application-name makehabit-codedeploy
-                  --deployment-config-name CodeDeployDefault.OneAtATime
-                  --deployment-group-name GROUP
-                  --ignore-application-stop-failures
-                  --s3-location bucket=makehabit,bundleType=zip,key=public/make-habit.zip
-                  --description "Ignore ApplicationStop failures due to broken script"
-    close_job:
-        # this job will only run if the PR has been closed without being merged
-        if: github.event.pull_request.merged == false
-        runs-on: ubuntu-latest
-        steps:
-            - run: |
-                  echo PR #${{ github.event.number }} has been closed without being merged
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      - name: upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./make-habit.zip s3://makehabit/public/
+      - name: deploy with AWS codeDeploy
+        run: aws deploy create-deployment
+          --application-name makehabit-codedeploy
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name GROUP
+          --ignore-application-stop-failures
+          --s3-location bucket=makehabit,bundleType=zip,key=public/make-habit.zip
+          --description "Ignore ApplicationStop failures due to broken script"
+  close_job:
+    # this job will only run if the PR has been closed without being merged
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo PR #${{ github.event.number }} has been closed without being merged
