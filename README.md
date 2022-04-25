@@ -69,7 +69,6 @@
 |      passport-kakao       |          카카오 로그인           |  1.0.1   |
 |            s3             |              aws S3              |  4.4.0   |
 |       sanitize-html       |             XSS방어              |  2.7.0   |
-|          sharp          |            로그 관리             |  3.6.0   |
 | jest |          테스트코드 작성          |  27.5.1   |
 |     prettier      |        코드 포맷팅        |  2.5.1   |
 |     supertest      |        테스트코드 작성        |  6.2.2   |
